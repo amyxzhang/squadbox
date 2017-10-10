@@ -1,17 +1,19 @@
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/haystack/murmur?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Murmur
+Squadbox
 =
 
-Murmur uses Django with a MySQL backend (you can replace with any other backend Django supports). For email, we use postfix along with the python lamson library.
+Fight harassment with your squad. Learn more at [squadbox.org](http://squadbox.org).
+
+Squadbox uses Django with a MySQL backend (you can replace with any other backend Django supports). For email, we use postfix along with the python lamson library.
 
 ### Installation Instructions
   
 #### Install MySQL Server
 
 #### Install Git and clone this repository
-* `git clone https://github.com/haystack/murmur.git`
+* `git clone https://github.com/amyxzhang/squadbox.git`
 
 #### install required linux packages if on linux
 * `sudo apt-get install libmysqlclient-dev python-dev`
@@ -20,8 +22,8 @@ Murmur uses Django with a MySQL backend (you can replace with any other backend 
 * `/usr/bin/python2.7`
 * pip: `sudo easy_install pip`
 * `sudo pip install virtualenv `
-* create a virtualenv for this project: `virtualenv murmur-env`
-* make sure your virtualenv is activated: `source murmur-env/bin/activate`
+* create a virtualenv for this project: `virtualenv squadbox-env`
+* make sure your virtualenv is activated: `source squadbox-env/bin/activate`
 
 #### install required python packages
 * `pip install mysql-python`
@@ -30,7 +32,7 @@ Murmur uses Django with a MySQL backend (you can replace with any other backend 
 #### configuration
 * edit database details in a new file called private.py. http_handler/settings.py looks for this file to populate database information:  
   `MYSQL_LOCAL = {  
-	  'NAME': 'murmur',  
+	  'NAME': 'squadbox',  
 	  'USER': 'admin',  
 	  'PASSWORD': 'password',  
 	  'HOST': 'localhost'  
@@ -39,9 +41,9 @@ Murmur uses Django with a MySQL backend (you can replace with any other backend 
 * `AWS_STORAGE_BUCKET_NAME = 'bucket-name-goes-here'`
 * `AWS_ACCESS_KEY_ID = 'key-goes-here'`
 * `AWS_SECRET_ACCESS_KEY = 'secret-key-goes-here'`
-* create file /opt/murmur/env with single word containing "dev", "staging", or "prod" for the type of server you are setting up
-* create file /opt/murmur/debug with single word containing "true" or "false" to turn on debug mode
-* edit file /opt/murmur/website with single word containing "murmur" or "squadbox" to direct to the respective landing page
+* create file /opt/squadbox/env with single word containing "dev", "staging", or "prod" for the type of server you are setting up
+* create file /opt/squadbox/debug with single word containing "true" or "false" to turn on debug mode
+* edit file /opt/squadbox/website with single word containing "squadbox" to direct to the respective landing page
 * If using Google integration, create a Google API project and enable the Gmail, People and Contacts APIs; generate an Oauth2 client_secrets.json file for this project and put this in the /gmail_setup/ directory
 
 #### if setting up a local email server (not necessary to run webserver)
@@ -51,8 +53,8 @@ Murmur uses Django with a MySQL backend (you can replace with any other backend 
 #### setup the database 
 * (optional: only during new database setup) change root password by: `set PASSWORD = PASSWORD('newPassword');`
 * `mysql -u root -p`
-* `create database murmur;`
-* Give privileges to the user that will access the database from django: `grant all privileges ON murmur.* TO admin@localhost;`
+* `create database squadbox;`
+* Give privileges to the user that will access the database from django: `grant all privileges ON squadbox.* TO admin@localhost;`
 
 #### install schema and create superuser
 * `python manage.py syncdb`and create superuser

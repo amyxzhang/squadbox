@@ -6,61 +6,42 @@ Squadbox
 
 Fight harassment with your squad. Learn more at [squadbox.org](http://squadbox.org).
 
-Squadbox uses Django with a MySQL backend (you can replace with any other backend Django supports). For email, we use postfix along with the python lamson library.
+<img src="squadbox_sticker.png" width="350">
 
-### Installation Instructions
-  
-#### Install MySQL Server
+## Hi!
+Thanks for checking out our repository! [Squadbox](http://squadbox.org) is a tool to help people who are being harassed online by having their friends (or “squad”) moderate their messages. 
 
-#### Install Git and clone this repository
-* `git clone https://github.com/amyxzhang/squadbox.git`
+In this README we cover:
+* [The motivation behind the project](#motivation)
+* [A broad overview of how it works](#how-it-works)
+* [Who we are](#who-we-are)
+* [What we need help with](#what-we-need-help-with)
+* [How you can get involved!](#getting-involved)
 
-#### install required linux packages if on linux
-* `sudo apt-get install libmysqlclient-dev python-dev`
+## Motivation
+Online harassment has become an increasingly prevalent issue - according to recent reports by [Data & Society](https://datasociety.net/blog/2017/01/18/online-harassment-digital-abuse/) and the [Pew Research Center](http://www.pewinternet.org/2017/07/11/online-harassment-2017/), nearly half of internet users in the United States have experienced some form of online harassment or abuse. Unfortunately, solutions for combating harassment have not kept up. Common technical solutions such as user blocking and word-based filters are blunt tools that cannot cover many forms of harassment, and can be circumvented by determined harassers.
 
-#### install virtualenv and python packages
-* `/usr/bin/python2.7`
-* pip: `sudo easy_install pip`
-* `sudo pip install virtualenv `
-* create a virtualenv for this project: `virtualenv squadbox-env`
-* make sure your virtualenv is activated: `source squadbox-env/bin/activate`
+Recently, researchers have tried to use machine learning models to detect harassment, but these models can be easily deceived and [contain gendered, racial, or other biases](https://www.engadget.com/2017/09/01/google-perspective-comment-ranking-system/). Given the strong evidence that automated tools are ineffective on their own, we propose that a better alternative is to continue engaging humans in the moderation process. However, while human moderators already make up many of the reporting pipelines for platforms, [harassment targets](https://www.buzzfeed.com/charliewarzel/a-honeypot-for-assholes-inside-twitters-10-year-failure-to-s) cannot currently count on [platform action](https://www.buzzfeed.com/charliewarzel/twitter-is-still-dismissing-harassment-reports-and) to shield them from harassment.
 
-#### install required python packages
-* `pip install mysql-python`
-* `pip install -r requirements.txt`
+We conducted interviews with several targets of online harassment, and found that without existing effective solutions within platforms, targets often turn to the help of friends, using techniques such as giving friends password access to rid their inboxes of harassment, or forwarding unopened emails to friends to moderate. This motivates the design and implementation of tools like Squadbox, that is able to work externally from platforms to combat harassment. 
 
-#### configuration
-* edit database details in a new file called private.py. http_handler/settings.py looks for this file to populate database information:  
-  `MYSQL_LOCAL = {  
-	  'NAME': 'squadbox',  
-	  'USER': 'admin',  
-	  'PASSWORD': 'password',  
-	  'HOST': 'localhost'  
-  }`
-* also in this private.py file, add your Amazon S3 settings:
-* `AWS_STORAGE_BUCKET_NAME = 'bucket-name-goes-here'`
-* `AWS_ACCESS_KEY_ID = 'key-goes-here'`
-* `AWS_SECRET_ACCESS_KEY = 'secret-key-goes-here'`
-* create file /opt/squadbox/env with single word containing "dev", "staging", or "prod" for the type of server you are setting up
-* create file /opt/squadbox/debug with single word containing "true" or "false" to turn on debug mode
-* edit file /opt/squadbox/website with single word containing "squadbox" to direct to the respective landing page
-* If using Google integration, create a Google API project and enable the Gmail, People and Contacts APIs; generate an Oauth2 client_secrets.json file for this project and put this in the /gmail_setup/ directory
+## How it Works
+People experiencing harassment sign up and create squads which they "own", and invite their friends or other trusted individuals to become moderators for their squad. The "owner" of the squad can set up filters to automatically forward potentially harassing incoming content to Squadbox’s moderation pipeline. When an email arrives for moderation, a moderator makes an assessment, adding annotations and rationale where needed. The message is then handled in a manner according to the owner’s preference, such as having the email delivered with a special tag, placed in a particular folder, or discarded.
 
-#### if setting up a local email server (not necessary to run webserver)
-* configure your relay_server (postfix or something else) in config/settings.py
-* use port other than 25 (default is currently set at 587)
+Currently, Squadbox only works with email messages. We have plans to work on integrating it with other platforms like Twitter in the near future!
 
-#### setup the database 
-* (optional: only during new database setup) change root password by: `set PASSWORD = PASSWORD('newPassword');`
-* `mysql -u root -p`
-* `create database squadbox;`
-* Give privileges to the user that will access the database from django: `grant all privileges ON squadbox.* TO admin@localhost;`
+## Who We Are
+We ([@amyxzhang](http://www.github.com/amyxzhang), [@kmahar](http://www.github.com/kmahar), [@karger](http://www.github.com/karger)) are a team of human-computer interaction researchers from the [Haystack Group](http://haystack.csail.mit.edu/) at [MIT CSAIL](http://www.csail.mit.edu/). 
+While this started as a research project, with the help of the Mozilla Foundation's [Open Leaders program](https://mozilla.github.io/leadership-training/), we are now working to convert it to a full-fledged open source project in order to expand the number of people contributing and maximize the project's impact.
 
-#### install schema and create superuser
-* `python manage.py syncdb`and create superuser
-* Convert schema app to be managed by South: `python manage.py schemamigration schema --initial`
-* Then do fake migration:  `python manage.py migrate schema 0001 --fake`
+Please feel free to reach out to us on Github or via email at [squadbox@mit.edu](mailto:squadbox@mit.edu)!
 
-#### run murmur server
-* If running email server: `lamson start`
-* Webserver: `python manage.py runserver`
+## What We Need Help With
+We're looking for anyone who is passionate about this issue to help us build and improve Squadbox! We need programmers to help us code, designers to improve the interface and user experience, and people with experience and knowledge about online harassment and moderation to help guide our design choices, create resources for owners and moderators, etc. 
+
+## Getting Involved 
+We use the [issue tracker](http://www.github.com/amyxzhang/squadbox/issues) to keep a list of work to be done on the project. We have a label for "good first issues" for getting your feet wet - you can see those issues [here](https://github.com/amyxzhang/squadbox/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). If you're interested in working on one of them, go ahead and comment and we'll help you get started!
+
+We have both coding and non-coding issues you can work on - while most on the list are coding, the non-coding ones can be found [here](https://github.com/amyxzhang/squadbox/issues?q=is%3Aopen+is%3Aissue+label%3Anon-coding).
+
+If you'll be working on a coding issue, follow the [coding setup instructions](/coding_setup.md) to get a local version of the project up and running. 

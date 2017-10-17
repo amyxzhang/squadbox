@@ -6,7 +6,7 @@ Squadbox
 
 Fight harassment with your squad. Learn more at [squadbox.org](http://squadbox.org).
 
-![logo](squadbox_sticker.png)
+<img src="squadbox_sticker.png" width="350">
 
 ## Hi!
 Thanks for checking out our repository! [Squadbox](http://squadbox.org) is a tool to help people who are being harassed online by having their friends (or “squad”) moderate their messages. 

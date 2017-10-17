@@ -4,11 +4,8 @@ Thank you for your interest in contributing to Squadbox! :heart: :mailbox_with_m
 
 [Squadbox](http://squadbox.org) is a tool to help people who are being harassed online by having their friends (or “squad”) moderate their messages.
 
-Add some info on *why* people should read your contributor guidelines and *what* they are.
+This documents is a set of guidelines for contributing to Squadbox on GitHub, and details our expectations for contributors, our coding workflow, and how we communicate. This guide is meant to make it easy for you to get involved!
 
->This documents is a set of guidelines for contributing to Squadbox on GitHub. These are guidelines, not rules. This guide is meant to make it easy for you to get involved.
-
-If your guide is long, consider adding a table of contents.
 
 * [Participation guidelines](#participation-guidelines)
 * [What we're working on](#what-were-working-on)
@@ -44,4 +41,4 @@ Anything seem weird or wrong? Please file any bugs, requests, or questions by cr
 
 ## Communication channels
 
-Do you have a chat room or email list you use to discuss this project? List them all here! Provide clear contact info, and outline the process for getting in touch, for anyone with questions.
+We have a mailing list for discussing the project, which you can join [here](http://murmur.csail.mit.edu/groups/squadbox-discuss). If you want to reach out to the project leads only, send us an email at [squadbox@mit.edu](mailto:squadbox@mit.edu). 

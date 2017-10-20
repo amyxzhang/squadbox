@@ -1,15 +1,15 @@
 # Contributing to Squadbox
 
-Thank you for your interest in contributing to Squadbox! :heart: :mailbox_with_mail:
+Thank you for your interest in contributing to Squadbox! :heart_eyes: :heart: :mailbox_with_mail:
 
 [Squadbox](http://squadbox.org) is a tool to help people who are being harassed online by having their friends (or “squad”) moderate their messages.
 
-This documents is a set of guidelines for contributing to Squadbox on GitHub, and details our expectations for contributors, our coding workflow, and how we communicate. This guide is meant to make it easy for you to get involved!
+This documents is a set of guidelines for contributing to Squadbox on GitHub, and details our expectations for contributors, our workflow, and how we communicate. This guide is meant to make it easy for you to get involved!
 
 
 * [Participation guidelines](#participation-guidelines)
 * [What we're working on](#what-were-working-on)
-* [How to submit changes](#how-to-submit-changes)
+* [How to contribute](#how-to-contribute)
 * [How to report bugs](#how-to-report-bugs)
 * [Communication channels](#communication-channels)
 
@@ -18,20 +18,17 @@ This documents is a set of guidelines for contributing to Squadbox on GitHub, an
 This project adheres to a [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code! Please report unacceptable behavior to [squadbox@mit.edu](mailto:squadbox@mit.edu).
 
 ## What we're working on
+Our main goal right now is to get Squadbox in solid shape to release it widely to the public. We've only tested with a small number of users so far and there are many areas we need to improve. Take a look at the issues in our [current milestone](https://github.com/amyxzhang/squadbox/milestone/1) or browse some [good first issues](https://github.com/amyxzhang/squadbox/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) to get started!
 
-This is a good place to link your Roadmap, GitHub Milestones, or Projects so newcomers can see what you're working on.
+After that, we hope to build integrations for Squadbox to be used with other communication platforms besides email.
 
-> Take a look at the issues in our [current milestone](https://github.com/acabunoc/mozfest-repo-template/milestone/1) or browse some [good first bugs](https://github.com/acabunoc/mozfest-repo-template/labels/good%20first%20bug) to get started!
+## How to contribute
 
-Take a look at this [Roadmapping exercise](http://mozillascience.github.io/working-open-workshop/roadmapping/) to start making your own milestones and issues. This will help newcomers (& MozFest attendees!) know where they can help.
-
-## How to submit changes
-
-Once you've identified one of the issues above that you feel you can contribute to, you're ready to make a change to the project repository!
- 
-1. **[Fork](https://help.github.com/articles/fork-a-repo/) this repository**. This makes your own version of this project you can edit and use!
-2. **[Make your changes](https://guides.github.com/activities/forking/#making-changes)**! You can do this in the GitHub interface on your own local machine. Once you're happy with your changes...
-3. **Submit a [pull request](https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/)** to merge your changes into the master branch. This opens a discussion around your changes and lets us know you are proposing them! 
+1. **Comment on the issue and introduce yourself!** Let us know you're working on it, so we don't duplicate work. This will also be a good time for you to ask us any questions you may have about the issue and for us to provide additional context to you. 
+2. **[Fork](https://help.github.com/articles/fork-a-repo/) this repository**. This makes your own version of this project you can edit and keep in sync with the main one. 
+3. **Check out a new branch** on your fork of the repository. Give it a descriptive name, like "readme-update" or "reply-bug". Make your changes on that branch. (If you're working on a coding issue, follow the [coding setup](/coding_setup.md) instructions to get all set up on your computer.
+4. **Commit your changes**. Use a descriptive commit message!  
+5. **Submit a [pull request](https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/)** to merge your changes into the master branch. This opens a discussion around your changes and lets us know you are proposing them! 
 
 First time contributing to open source? Check out this *free* series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 

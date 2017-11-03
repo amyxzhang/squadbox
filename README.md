@@ -36,6 +36,8 @@ While this started as a research project, with the help of the Mozilla Foundatio
 
 Please feel free to reach out to us on Github or via email at [squadbox@mit.edu](mailto:squadbox@mit.edu)! :email:
 
+You can join our mailing list [here!](http://murmur.csail.mit.edu/groups/squadbox-discuss)
+
 ## What We Need Help With
 We're looking for anyone who is passionate about this issue to help us build and improve Squadbox! We need programmers to help us code, designers to improve the interface and user experience, and people with experience and knowledge about online harassment and moderation to help guide our design choices, create resources for owners and moderators, etc. 
 

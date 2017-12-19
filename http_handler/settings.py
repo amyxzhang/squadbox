@@ -7,9 +7,9 @@ import django
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-_ENV_FILE_PATH = '/opt/murmur/env'
-_DEBUG_FILE_PATH = '/opt/murmur/debug'
-_WEBSITE_FILE_PATH = '/opt/murmur/website'
+_ENV_FILE_PATH = '/opt/squadbox/env'
+_DEBUG_FILE_PATH = '/opt/squadbox/debug'
+_WEBSITE_FILE_PATH = '/opt/squadbox/website'
 
 def _get_env():
     f = open(_ENV_FILE_PATH)
@@ -55,10 +55,7 @@ except IOError:
     print "Unable to open configuration file!"
 
 if ENV == 'prod':
-    if WEBSITE == 'murmur':
-        BASE_URL = 'murmur.csail.mit.edu'
-    else:
-        BASE_URL = 'squadbox.csail.mit.edu'
+    BASE_URL = 'squadbox.csail.mit.edu'
     MYSQL = MYSQL_PROD
 elif ENV == 'staging':
     BASE_URL = 'murmur-dev.csail.mit.edu'

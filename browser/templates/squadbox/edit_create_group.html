@@ -11,7 +11,8 @@
 <form id="group-form">
 	<h4 class="strong">Squad Name:</h4>
 	<span class="italic-med">
-		Maximum 20 characters. Only alphanumeric characters, underscores, and dashes allowed.
+		Maximum 20 characters. Only alphanumeric characters, underscores, and dashes allowed.<br>
+		Emails sent to [squadname]@squadbox.org will go through moderation (we'll help you set up forwarding later.)
 	</span>
 	<br>
 	{% if edit_page %}
@@ -22,11 +23,14 @@
 		</input>
 	{% endif %}
 	<br><br>
-	<h4 class="strong">Squad Description:</h4>
-	<span class="italic-med">(optional) Maximum 140 characters</span><br>
+	<h4 class="strong">Description:</h4>
+	<span class="italic-med">(optional) Maximum 140 characters. Use this to write info about your squad, or a thank-you note to your moderators.</span><br>
 	
 	<textarea id="group-description" maxlength="140">{% if edit_page %}{{ group_info.description.strip }}{% endif %}</textarea>
-	<br><br>
+	<hr><br>
+	{% if not edit_page %}
+	<h4>Next, customize how your squad works. (Don't worry, you can edit these settings later.)</h4><br>
+	{% endif %}
 	<h4 class="strong">Attachment Policy: </h4>
 	{% if group_info.allow_attachments or not edit_page %}
 		<input type="radio" name="attach" value="yes-attach" id="rdo-attach" checked>
@@ -36,7 +40,7 @@
 	Allow Attachments
 	<br>
 	<span class="italic-small">
-		Emails with attachments that reach your Squadbox will be moderated as usual. Your squad's moderators will be able to see them when they review messages, and you'll see the attachments on approved messages.
+		Emails with attachments that reach your Squadbox will go through moderation. Your moderators will be able to see them when they review messages, and you'll see the attachments on approved messages.
 	</span>
 	{% if group_info.allow_attachments or not edit_page %}
 		<input type="radio" name="attach" value="attach" id="rdo-attach">
@@ -46,7 +50,7 @@
 	No Attachments Allowed
 	<br>
 	<span class="italic-small">
-		Emails that reach your Squadbox with attachments will automatically be rejected.
+		Emails that reach your Squadbox and have attachments will automatically be rejected.
 	</span>
 	
 	<br>

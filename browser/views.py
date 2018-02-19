@@ -337,6 +337,7 @@ def my_groups(request):
 @render_to("mobile_list_groups.html")
 @login_required
 def my_group_list(request):
+	print("here i am")
 	user = get_object_or_404(UserProfile, email=request.user.email)
 	res = engine.main.list_my_groups(user)
 	groups_links = get_groups_links_from_roles(user, res['groups'])
@@ -364,11 +365,15 @@ def group_page(request, group_name):
 	groups_links = get_groups_links_from_roles(user, groups)
 	active_group = Group.objects.get(name=group_name)
 	active_group_role = get_role_from_group_name(user, group_name)
+	filter_hash = None
+	if active_group_role == "admin":
+		res = engine.main.get_or_generate_filter_hash(user, group_name, push=False)
+		filter_hash = '%s@%s' % (res['hash'], BASE_URL)
 
 	if group_info['group']:
 		return {'user': request.user, 'groups': groups, 'group_info': group_info, 'group_page': True, 
 		'admin_address' : group_name + '+admins@' + HOST, 'groups_links' : groups_links, 
-		'active_group' : active_group, 'active_group_role' : active_group_role}
+		'active_group' : active_group, 'active_group_role' : active_group_role,  'filter_hash' : filter_hash}
 	else:
 		return redirect('/404?e=gname&name=%s' % group_name)
 	
@@ -1618,14 +1623,15 @@ def mod_queue(request, group_name):
 		return redirect(global_settings.LOGIN_URL)
 
 def subscribe_confirm(request, token):
-	mgp = MemberGroupPending.objects.get(hash=token)
+	mgp = MemberGroupPending.objects.filter(hash=token)
 	if mgp:
-		mod = WEBSITE == 'squadbox'
-		mg,_ = MemberGroup.objects.get_or_create(member=mgp.member, group=mgp.group, moderator=mod)
-		MemberGroupPending.objects.get(hash=token).delete()
-		return HttpResponseRedirect('/')
+		mod = True
+		mg,_ = MemberGroup.objects.get_or_create(member=mgp[0].member, group=mgp[0].group, moderator=mod)
+		mgp[0].delete()
+		return HttpResponse('Membership confirmed. Go <a href="/accounts/login/">here</a> to login to Squadbox.', content_type="text/html")
 	else:
-		return HttpResponseRedirect('/404')
+
+		return HttpResponse('Token not found. Have you already used this confirmation link? Login <a href="/accounts/login/">here</a> to check.', content_type="text/html")
 
 @render_to('squadbox/rejected.html')
 def rejected(request, group_name):

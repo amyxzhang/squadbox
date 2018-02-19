@@ -506,56 +506,31 @@ def add_members(group_name, emails, add_as_mods, user):
                 if not member:
                     confirm_code = hashlib.sha1(email+group_name+str(random.random())).hexdigest()
                     confirm_url = 'http://' + BASE_URL + '/subscribe/confirm/' + confirm_code
-                    if WEBSITE == "murmur":
-                        mail = MailResponse(From = NO_REPLY, 
-                                            To = email, 
-                                            Subject  = "You've been invited to join %s Mailing List" % (group_name))
-                        
-                        if email_user.count() == 1:
-                            mg,_ = MemberGroupPending.objects.get_or_create(member=email_user[0], group=group, hash=confirm_code)
-                            message = "You've been invited to join %s Mailing List. <br />" % (group_name)
-                            message += "To confirm your subscription to this list, visit <a href='%s'>%s</a><br />" % (confirm_url, confirm_url)
-                            message += "To see posts from this list, visit <a href='http://%s/posts?group_name=%s'>http://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                            message += "To manage your mailing list settings, subscribe, or unsubscribe, visit <a href='http://%s/groups/%s'>http://%s/groups/%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                        else:
-                            pw = password_generator()
-                            new_user = UserProfile.objects.create_user(email, pw)
-                            mg,_ = MemberGroupPending.objects.get_or_create(group=group, member=new_user, hash=confirm_code)
-                            message = "You've been subscribed to %s Mailing List. <br />" % (group_name)
-                            message += "To confirm your subscription to this list, visit <a href='%s'>%s</a><br />" % (confirm_url, confirm_url)
-                            message += "An account to manage your settings has been created for you at <a href='http://%s'>http://%s</a><br />" % (BASE_URL, BASE_URL)
-                            message += "Your username is your email, which is %s and your auto-generated password is %s <br />" % (email, pw)
-                            message += "If you would like to change your password, please log in at the link above and then you can change it under your settings. <br />"
-                            message += "To see posts from this list, visit <a href='http://%s/posts?group_name=%s'>http://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                            message += "To manage your mailing lists, subscribe, or unsubscribe from groups, visit <a href='http://%s/groups'>http://%s/my_groups</a><br />" % (BASE_URL, BASE_URL)
-        
-                        mail.Html = message
-                        logging.debug('TO LIST: ' + str(email))
-                    elif WEBSITE == "squadbox":
-                        mail = MailResponse(From = NO_REPLY, 
-                                            To = email, 
-                                            Subject  = "You've been invited to join %s squad" % (group_name))
-                        
-                        if email_user.count() == 1:
-                            mg,_ = MemberGroupPending.objects.get_or_create(member=email_user[0], group=group, hash=confirm_code)
-                            message = "You've been invited to join %s squad. <br />" % (group_name)
-                            message += "To confirm your membership of this squad, visit <a href='%s'>%s</a><br />" % (confirm_url, confirm_url)
-                            message += "To see posts for this squad, visit <a href='http://%s/posts?group_name=%s'>http://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                            message += "To manage your squad settings, subscribe, or unsubscribe, visit <a href='http://%s/groups/%s'>http://%s/groups/%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                        else:
-                            pw = password_generator()
-                            new_user = UserProfile.objects.create_user(email, pw)
-                            mg,_ = MemberGroupPending.objects.get_or_create(group=group, member=new_user, hash=confirm_code)
-                            message = "You've been added as a moderator to %s squad. <br />" % (group_name)
-                            message += "To confirm your membership of this squad, visit <a href='%s'>%s</a><br />" % (confirm_url, confirm_url)
-                            message += "An account to manage your settings has been created for you at <a href='http://%s'>http://%s</a><br />" % (BASE_URL, BASE_URL)
-                            message += "Your username is your email, which is %s and your auto-generated password is %s <br />" % (email, pw)
-                            message += "If you would like to change your password, please log in at the link above and then you can change it under your settings. <br />"
-                            message += "To see posts from this squad, visit <a href='http://%s/posts?group_name=%s'>http://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                            message += "To manage your squads, subscribe, or unsubscribe, visit <a href='http://%s/groups'>http://%s/my_groups</a><br />" % (BASE_URL, BASE_URL)
-        
-                        mail.Html = message
-                        logging.debug('TO LIST: ' + str(email))
+
+                    mail = MailResponse(From = NO_REPLY, 
+                                        To = email, 
+                                        Subject  = "You've been invited to join %s squad" % (group_name))
+                    
+                    message = "You've been added as a moderator for the squad: %s. <br />" % (group_name)
+                    message += "To confirm your membership, visit <a href='%s'>%s</a><br />" % (confirm_url, confirm_url)
+
+                    if email_user.count() == 1:
+                        mg,_ = MemberGroupPending.objects.get_or_create(member=email_user[0], group=group, hash=confirm_code)        
+                    else:
+                        pw = password_generator()
+                        new_user = UserProfile.objects.create_user(email, pw)
+                        mg,_ = MemberGroupPending.objects.get_or_create(group=group, member=new_user, hash=confirm_code)
+                        message += "An account to manage your settings has been created for you at <a href='http://%s'>http://%s</a><br />" % (BASE_URL, BASE_URL)
+                        message += "Your username is your email, which is %s and your auto-generated password is %s <br />" % (email, pw)
+                        message += "If you would like to change your password, please log in at the link above and then you can change it under your settings. <br />"
+                    
+                    message += "To see posts from this squad, visit <a href='http://%s/posts?group_name=%s'>http://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
+                    message += "To manage your squads, subscribe, or unsubscribe, visit <a href='http://%s/groups'>http://%s/my_groups</a><br />" % (BASE_URL, BASE_URL)
+    
+
+                    print "MESSAGE: %s" % message
+                    mail.Html = message
+                    logging.debug('TO LIST: ' + str(email))
                     
                     relay_mailer.deliver(mail, To = [email])
             res['status'] = True

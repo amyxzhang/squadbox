@@ -1,0 +1,25 @@
+<div class="modal fade" id="getting-started-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Getting Started</h4>
+      </div>
+      <div class="modal-body">
+      1. <b>Add one or more moderators</b>. Your moderators will review messages for you to add tags, summaries, and approve/reject messages.
+      <a href="/groups/{{group_info.group.name}}/add_members">Click here to invite moderators</a>.<br><br>
+      2. <b>Direct messages that you want moderated to your Squadbox account</b>. If you use Gmail, <a href="/gmail_setup/?group={{group_info.group.name}}">connect your account</a> to automatically create filters 
+      and generate whitelist suggestions. If you don't use Gmail, you should set up a filter that forwards messages
+      from your inbox to <a>{{group_info.group.name}}@squadbox.org</a> unless if they are sent to the mailing list (or have list-id)
+      <a>{{ filter_hash }}</a>.
+      <br><br>
+      3. <b>Add trusted senders to your whitelist.</b> Emails from trusted senders will be automatically approved. 
+      You can <a href="/groups/{{group_info.group.name}}/add_whitelist">add addresses manually</a>, or <a href="/gmail_setup/?group={{group_info.group.name}}">import your contacts</a> to get suggestions if you use Gmail. <br><br>
+      4. Add any sender you want to block to your <a href="/groups/{{group_info.group.name}}/add_blacklist">blacklist</a>. 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

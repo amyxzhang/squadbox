@@ -5,8 +5,11 @@
 {% block content %}
 <span id='mod-can-edit' style='display:none'>{{ group_info.group.mod_edit_wl_bl }}</span>
 <div class="container">
+	{% include "squadbox/getting_started_modal.html" %}
+	{% if group_info.admin %}
+	<center><b>New to Squadbox?</b> <a href="" data-toggle="modal" data-target="#getting-started-modal">Click here</a> for tips on getting started.</center>
+	{% endif %}
 	<div class="group-container">
-		
 		{% if group_info.admin %}
 			<span class="admin label">owner</span>
 		{% elif group_info.moderator %}

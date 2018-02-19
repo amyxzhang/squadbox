@@ -1,4 +1,8 @@
 {% extends "group_container_base.html" %}
+{% block top-info %}
+{% include "squadbox/mod_modal.html" %}
+<center><b>New to Squadbox?</b> <a href="" data-toggle="modal" data-target="#mod-modal">Click here</a> for tips on moderating and being an online bystander.</center>
+{% endblock %}
 {% block container-content %}
 	<div id="post-column-area-wrapper">
 		<h3><b>Moderation Queue for <a href="/groups/{{active_group}}">{{ active_group }}</a></b>

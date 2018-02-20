@@ -50,6 +50,22 @@ def logout(request):
 def about(request):
 	return {}
 
+@render_to('resources.html')
+def resources(request):
+	if request.user.is_authenticated():
+		user = get_object_or_404(UserProfile, email=request.user.email)
+		groups = Group.objects.filter(membergroup__member=user).values("name")
+		groups_links = get_groups_links_from_roles(user, groups)
+	else:
+		user = None
+		groups = []
+		groups_links = []
+
+	res = {'user': request.user, 'groups': groups, 'group_page': True, 'my_groups': True, 
+	'groups_links' : groups_links, 'website': WEBSITE}
+
+	return res
+
 @render_to('404.html')
 def error(request):
 	if request.user.is_authenticated():
@@ -368,7 +384,7 @@ def group_page(request, group_name):
 	filter_hash = None
 	if active_group_role == "admin":
 		res = engine.main.get_or_generate_filter_hash(user, group_name, push=False)
-		filter_hash = '%s@%s' % (res['hash'], BASE_URL)
+		filter_hash = '%s+%s@%s' % (group_name, res['hash'], BASE_URL)
 
 	if group_info['group']:
 		return {'user': request.user, 'groups': groups, 'group_info': group_info, 'group_page': True, 

@@ -195,7 +195,7 @@ def edit_members_table(group_name, toDelete, toAdmin, toMod, user):
                 subject = "made an admin in group"
             elif type == "mod":
                 subject = "made a moderator in group"
-            mail = MailResponse(From = NO_REPLY, To = email, Subject = "You've been " + subject + " " + group, Html = "You've been " + subject + " " + group + "<br /><br />To manage your mailing lists, subscribe, or unsubscribe from groups, visit <a href='http://%s/groups'>http://%s/my_groups</a>" % (BASE_URL, BASE_URL))
+            mail = MailResponse(From = NO_REPLY, To = email, Subject = "You've been " + subject + " " + group, Html = "You've been " + subject + " " + group + "<br /><br />To manage your mailing lists, subscribe, or unsubscribe from groups, visit <a href='https://%s/groups'>https://%s/my_groups</a>" % (BASE_URL, BASE_URL))
             relay_mailer.deliver(mail, To = [email])
         for membergroup in membergroups:
             if membergroup.id in toDelete_realList:
@@ -505,7 +505,7 @@ def add_members(group_name, emails, add_as_mods, user):
                     member = MemberGroup.objects.filter(member=email_user[0], group=group).exists() or MemberGroupPending.objects.filter(member=email_user[0], group=group).exists()
                 if not member:
                     confirm_code = hashlib.sha1(email+group_name+str(random.random())).hexdigest()
-                    confirm_url = 'http://' + BASE_URL + '/subscribe/confirm/' + confirm_code
+                    confirm_url = 'https://' + BASE_URL + '/subscribe/confirm/' + confirm_code
 
                     mail = MailResponse(From = NO_REPLY, 
                                         To = email, 
@@ -520,12 +520,12 @@ def add_members(group_name, emails, add_as_mods, user):
                         pw = password_generator()
                         new_user = UserProfile.objects.create_user(email, pw)
                         mg,_ = MemberGroupPending.objects.get_or_create(group=group, member=new_user, hash=confirm_code)
-                        message += "An account to manage your settings has been created for you at <a href='http://%s'>http://%s</a><br />" % (BASE_URL, BASE_URL)
+                        message += "An account to manage your settings has been created for you at <a href='https://%s'>https://%s</a><br />" % (BASE_URL, BASE_URL)
                         message += "Your username is your email, which is %s and your auto-generated password is %s <br />" % (email, pw)
                         message += "If you would like to change your password, please log in at the link above and then you can change it under your settings. <br />"
                     
-                    message += "To see posts from this squad, visit <a href='http://%s/posts?group_name=%s'>http://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
-                    message += "To manage your squads, subscribe, or unsubscribe, visit <a href='http://%s/groups'>http://%s/my_groups</a><br />" % (BASE_URL, BASE_URL)
+                    message += "To see posts from this squad, visit <a href='https://%s/posts?group_name=%s'>https://%s/posts?group_name=%s</a><br />" % (BASE_URL, group_name, BASE_URL, group_name)
+                    message += "To manage your squads, subscribe, or unsubscribe, visit <a href='https://%s/groups'>https://%s/my_groups</a><br />" % (BASE_URL, BASE_URL)
     
 
                     print "MESSAGE: %s" % message
@@ -1174,7 +1174,7 @@ def upvote(post_id, email=None, user=None):
         authormembergroup = MemberGroup.objects.get(group=p.group, member=p.author)
     if authormembergroup:
         if authormembergroup.upvote_emails:
-            body = "Your post, \"" + p.subject + "\" in group [" + p.group.name + "] was upvoted by " + user.email + ".<br /><br /><hr /><br /> You can turn off these notifications in your <a href=\"http://" + BASE_URL + "/groups/" + p.group.name + "/edit_my_settings\">group settings</a>."
+            body = "Your post, \"" + p.subject + "\" in group [" + p.group.name + "] was upvoted by " + user.email + ".<br /><br /><hr /><br /> You can turn off these notifications in your <a href=\"https://" + BASE_URL + "/groups/" + p.group.name + "/edit_my_settings\">group settings</a>."
             mail = MailResponse(From = NO_REPLY, To = p.poster_email, Subject = '['+p.group.name+'] Your post was upvoted by '+user.email, Html = body)
             relay_mailer.deliver(mail, To = [p.poster_email])
 

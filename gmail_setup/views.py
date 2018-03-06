@@ -78,8 +78,8 @@ def index(request):
 @login_required
 def auth(request):
     # use the first REDIRECT_URI if you are developing your app locally, and the second in production
-    #REDIRECT_URI = 'http://localhost:8000/gmail_setup/callback'
-    REDIRECT_URI = "http://%s%s" % (BASE_URL, reverse("oauth2:return")) 
+    #REDIRECT_URI = 'https://localhost:8000/gmail_setup/callback'
+    REDIRECT_URI = "https://%s%s" % (BASE_URL, reverse("oauth2:return")) 
     #REDIRECT_URI = 'https://' + BASE_URL + '/gmail_setup/callback'
     print "ACCESSING CLIENT SECRETS"
     with open(CLIENT_SECRETS) as json_data:

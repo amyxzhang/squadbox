@@ -35,25 +35,25 @@ FETCH_SUFFIX = '__fetch__'
 
 ADMIN_EMAILS = ['axz@mit.edu', 'kmahar@mit.edu']
 
-FOLLOW_ADDR = 'http://%s/follow?tid=' % (HOST)
-UNFOLLOW_ADDR = 'http://%s/unfollow?tid=' % (HOST)
+FOLLOW_ADDR = 'https://%s/follow?tid=' % (HOST)
+UNFOLLOW_ADDR = 'https://%s/unfollow?tid=' % (HOST)
 
-FOLLOW_TAG_ADDR = 'http://%s/follow_tag_get?tag=' % (HOST)
-UNFOLLOW_TAG_ADDR = 'http://%s/unfollow_tag_get?tag=' % (HOST)
-MUTE_TAG_ADDR = 'http://%s/mute_tag_get?tag=' % (HOST)
-UNMUTE_TAG_ADDR = 'http://%s/unmute_tag_get?tag=' % (HOST)
+FOLLOW_TAG_ADDR = 'https://%s/follow_tag_get?tag=' % (HOST)
+UNFOLLOW_TAG_ADDR = 'https://%s/unfollow_tag_get?tag=' % (HOST)
+MUTE_TAG_ADDR = 'https://%s/mute_tag_get?tag=' % (HOST)
+UNMUTE_TAG_ADDR = 'https://%s/unmute_tag_get?tag=' % (HOST)
 
-MUTE_ADDR = 'http://%s/mute?tid=' % (HOST)
-UNMUTE_ADDR = 'http://%s/unmute?tid=' % (HOST)
+MUTE_ADDR = 'https://%s/mute?tid=' % (HOST)
+UNMUTE_ADDR = 'https://%s/unmute?tid=' % (HOST)
 
-UPVOTE_ADDR = 'http://%s/upvote_get?tid=%s&post_id=%s' 
+UPVOTE_ADDR = 'https://%s/upvote_get?tid=%s&post_id=%s' 
 
-SUBSCRIBE_ADDR = 'http://%s/subscribe_get?group_name=%s'
-UNSUBSCRIBE_ADDR = 'http://%s/unsubscribe_get?group_name=%s'
+SUBSCRIBE_ADDR = 'https://%s/subscribe_get?group_name=%s'
+UNSUBSCRIBE_ADDR = 'https://%s/unsubscribe_get?group_name=%s'
 
-EDIT_SETTINGS_ADDR = 'http://%s/groups/%s/edit_my_settings'
+EDIT_SETTINGS_ADDR = 'https://%s/groups/%s/edit_my_settings'
 
-PERMALINK_POST = 'http://%s/thread?tid=%s&post_id=%s'
+PERMALINK_POST = 'https://%s/thread?tid=%s&post_id=%s'
 
 HTML_SUBHEAD = '<div style="border-top:solid thin;padding-top:5px;margin-top:10px">'
 HTML_SUBTAIL = '</div>'
@@ -149,7 +149,7 @@ def setup_post(From, Subject, group_name):
 		"Reply-To": post_addr,
 		"List-Id": post_addr,
 		"List-Unsubscribe": "<mailto:%s+unsubscribe@%s>" % (group_name, HOST),
-		"List-Archive": "<http://%s/groups/%s/>" % (HOST, group_name),
+		"List-Archive": "<https://%s/groups/%s/>" % (HOST, group_name),
 		"List-Post": "<mailto:%s>" % (group_name + '@' + HOST),
 		"List-Help": "<mailto:help@%s>" % HOST,
 		"List-Subscribe": "<mailto:%s+subscribe@%s>" % (group_name, HOST),
@@ -379,24 +379,10 @@ def _insert_tag_line(group, tags, membergroup, tag_following, tag_muting):
 
 
 def html_forwarded_blurb(group_name, to_list, original_list_email=None):
-	content = ''
-	if original_list_email:
-		content += 'This post was sent to %s@%s via the mailing list %s.<BR>' % (group_name, HOST, original_list_email)
-	content += "You're receiving this message because the Murmur group %s (%s@%s) is set to forward \
-			posts to a mailing list you are a member of (%s)." % (group_name, group_name, HOST, to_list)
-	content += "<BR><BR><a href='http://murmur.csail.mit.edu'>Learn more about Murmur</a>"
-	body = '%s%s%s' % (HTML_SUBHEAD, content, HTML_SUBTAIL)
-	return body
+	return ""
 
 def plain_forwarded_blurb(group_name, to_list, original_list_email=None):
-	content = ''
-	if original_list_email:
-		content += 'This post was sent to %s@%s via the mailing list %s.\n' % (group_name, HOST, original_list_email)
-	content += "You\'re receiving this message because the Murmur group %s (%s@%s) is set to forward \
-			posts to a mailing list you are a member of (%s)." % (group_name, group_name, HOST, to_list)
-	content += "\n\nLearn more about Murmur <http://murmur.csail.mit.edu>"
-	body = '%s%s%s' % (HTML_SUBHEAD, content, HTML_SUBTAIL)
-	return body
+	return ""
 
 def ps_squadbox(sender, reason, squad_name, squad_auto_approve, subject, mod_email, HTML):
 

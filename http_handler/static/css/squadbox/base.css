@@ -135,6 +135,15 @@ hr{
 	font-family: 'Hind', sans-serif;
 }
 
+.medium-container {
+	margin:0px auto;
+	margin-top:40px;
+	padding:80px; 
+	vertical-align:top;
+	background-color: rgba(183, 233, 250, 0.5);
+	font-family: 'Hind', sans-serif;
+}
+
 .group-container-posts {
 	margin:0px auto;
 	margin-top:30px; 

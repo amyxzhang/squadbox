@@ -66,6 +66,22 @@ def resources(request):
 
 	return res
 
+@render_to(WEBSITE+'/email_filters.html')
+def email_filters(request):
+	filter_hash = None
+	user = None
+	active_group = None
+	group_name = request.GET.get('group')
+	group_address = '%s@%s' % (group_name, BASE_URL)
+	print "group address:", group_address
+	if request.user.is_authenticated():
+		user = get_object_or_404(UserProfile, email=request.user.email)
+		if get_role_from_group_name(user, group_name) == "admin":
+			res = engine.main.get_or_generate_filter_hash(user, group_name, push=False)
+			filter_hash = '%s@%s' % (res['hash'], BASE_URL)
+	return {'user': user, 'website': WEBSITE, 'filter_hash' : filter_hash, 
+			'group_address': group_address, 'group_name': group_name}
+
 @render_to('404.html')
 def error(request):
 	if request.user.is_authenticated():
@@ -1223,7 +1239,7 @@ def subscribe_get(request):
 	group_name = request.GET.get('group_name')
 	email_param = request.GET.get('email')
 
-	if not request.user.is_authenticated() and not email_param:
+	if not request.user.is_authenticated() and not email:
 		return redirect(global_settings.LOGIN_URL + '?next=/subscribe_get?group_name=' + group_name)
 
 	if WEBSITE == 'murmur':

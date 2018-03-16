@@ -197,6 +197,7 @@ elif WEBSITE == 'squadbox':
 
                     url(r'^moderate_user_for_thread_get', 'browser.views.moderate_user_for_thread_get'),
                     url(r'^resources', 'browser.views.resources'),
+                    url(r'^email_filters', 'browser.views.email_filters'),
                     ]
 
     urlpatterns.extend(new_patterns)

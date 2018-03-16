@@ -54,7 +54,7 @@ def index(request):
         return {'group_name': None}
 
     group_name = request.GET['group']
-    forward_address = group_name + '@' + BASE_URL
+    forward_address = group_name + '@' + 'squadbox.org'
 
     services = build_services(user)
 

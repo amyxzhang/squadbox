@@ -1,0 +1,46 @@
+{% extends website|add:"/base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<div class="medium-container">
+     <h3>Creating Email Filters For Squadbox</h3><br>
+     <h4>If you use Gmail (or Google Inbox):</h4> 
+     	<p>Go to <a href="/gmail_setup?group={{group_name}}">this page</a> to authorize Squadbox to access your Gmail account. We will use this access to:
+		<ul>
+			<li>Import your contacts and people you've recently emailed to generate whitelist suggestions</li>
+			<li>Create a filter that automatically forwards a copy of messages you want moderated to Squadbox</li>
+			<li>Hide the messages that are waiting for moderation by temporarily moving them to the trash, and then move them back to your inbox when they're approved</li>
+		</ul>
+     	</p>
+
+    <h4>If you don't use Gmail:</h4>
+		<p><i>Note: if you have experience with email clients besides Gmail or have successfully set up Squadbox with a non-Gmail client, we would love to hear any tips or info from you on that process, and would welcome contributions to this guide! Check out our GitHub issue <a href="https://github.com/amyxzhang/squadbox/issues/45">here</a>.</i></p>
+
+    	<p>What we are trying to accomplish here is, in words: "if an email needs moderation and has not already been to Squadbox, send it to Squadbox."<br> This means that we must <i>slightly</i> modify messages after they pass through Squadbox so that your email client can tell the difference and not keep sending the same messages back to Squadbox over and over.<br> The way we prevent this is by adding a secret extra piece of information to messages, called a "list ID". (This is usually set by messages sent via a mailing list). Your email client can look for that secret and know that emails containing it are approved. 
+    	The custom list ID we will set on messages that have been approved is: <b>{{filter_hash}}</b>.</p>
+
+    	<p>You will need to create a filter that says: "if a message <b>matches my moderation criteria*</b> and it did not come from the mailing list/have list-id {{filter_hash}}, forward it to {{group_address}} and move it to my trash/some non-inbox folder."</p>
+
+    	<p>*What is <b>moderation criteria</b>? It defines messages you want to pass through Squadbox - i.e. messages from certain senders, or containing certain words, or with a particular subject line, etc. You can get creative as your email client's filters allow. <b>Note</b>: if messages from whitelisted senders get forwarded to Squadbox, they will be automatically approved and sent back immediately.</p>
+
+    	<p>
+    		Here are some links to documentation on creating filters in various email clients: 
+    		<ul>
+    			<li><a href="https://support.apple.com/guide/mail/use-rules-to-manage-your-inbox-mlhlp1017/mac">Apple/Mac Mail</a></li>
+    			<li><a href="https://support.mozilla.org/en-US/kb/organize-your-messages-using-filters">Mozilla Thunderbird</a></li>
+    			<li><a href="https://support.office.com/en-us/article/manage-email-messages-by-using-rules-c24f5dea-9465-4df4-ad17-a50704d66c59">Microsoft Outlook</a></li>
+    			<li><a href="https://help.yahoo.com/kb/SLN15994.html">Yahoo Mail</a></li>
+    		</ul>
+
+    	</p>
+
+	</div>
+</div>
+
+{% endblock %}
+
+
+
+
+

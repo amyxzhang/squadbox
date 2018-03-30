@@ -16,7 +16,7 @@ from engine.constants import extract_hash_tags, ALLOWED_MESSAGE_STATUSES
 from gmail_setup.api import update_gmail_filter, untrash_message
 from gmail_setup.views import build_services
 from http_handler.settings import BASE_URL, WEBSITE, AWS_STORAGE_BUCKET_NAME, PERSPECTIVE_KEY
-from s3_storage import upload_attachments, download_attachments, download_message
+from s3_storage import upload_attachments, download_attachments
 from schema.models import *
 from smtp_handler.utils import *
 
@@ -1574,15 +1574,6 @@ def update_post_status(user, group_name, post_id, new_status, explanation=None, 
                 mail = MailResponse(From = 'no_reply@%s' % HOST, To = admin.email, Subject = '%s: %s' % (p.poster_email, new_subj))
                 mail['message-id'] = p.msg_id
                 mail['reply-to'] = p.poster_email
-
-                res = download_message(p.id, p.msg_id)
-                if not res['status']:
-                    logging.error("Error downloading original message")
-                else:
-                    original_msg = email.message_from_string(res['message'])
-                    mail['In-Reply-To'] = original_msg['In-Reply-To']
-                    mail['References'] = original_msg['References']
-                    mail['Cc'] = original_msg['Cc']
 
                 attachments = download_attachments(p.msg_id)
                 for a in attachments:

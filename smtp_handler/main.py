@@ -1,7 +1,7 @@
 import logging, time, base64
 from lamson.routing import route, stateless
 from config.settings import relay
-from http_handler.settings import WEBSITE
+from http_handler.settings import WEBSITE, HOST_REGEX
 from schema.models import *
 from lamson.mail import MailResponse
 from email.utils import *
@@ -23,7 +23,7 @@ Murmur Mail Interface Handler
 
 GROUP_OR_SQUAD = {'murmur' : 'group', 'squadbox' : 'squad'}
 
-@route("(address)@(host)", address="all", host=HOST)
+@route("(address)@(host)", address="all", host=HOST_REGEX)
 @stateless
 def all(message, address=None, host=None):
     # no public groups to list on squadbox. 
@@ -45,7 +45,7 @@ def all(message, address=None, host=None):
         relay.deliver(mail)
 
 
-@route("(group_name)\\+create@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+create@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def create(message, group_name=None, host=None):
     # at least for now, for now we don't need this
@@ -66,7 +66,7 @@ def create(message, group_name=None, host=None):
         relay.deliver(mail)
 
 
-@route("(group_name)\\+activate@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+activate@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def activate(message, group_name=None, host=None):
 
@@ -86,7 +86,7 @@ def activate(message, group_name=None, host=None):
     mail = MailResponse(From = NO_REPLY, To = message['From'], Subject = subject, Body = body) 
     relay.deliver(mail)
 
-@route("(group_name)\\+deactivate@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+deactivate@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def deactivate(message, group_name=None, host=None):
 
@@ -108,7 +108,7 @@ def deactivate(message, group_name=None, host=None):
 
 
 # A route to provide a contact email address for a group's administrator(s)
-@route("(group_name)\\+admins@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+admins@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def admins(message, group_name=None, host=None):
 
@@ -155,7 +155,7 @@ def admins(message, group_name=None, host=None):
             return
 
 
-@route("(group_name)\\+subscribe@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+subscribe@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def subscribe(message, group_name=None, host=None):
 
@@ -201,7 +201,7 @@ def subscribe(message, group_name=None, host=None):
         relay.deliver(mail)
 
 
-@route("(group_name)\\+unsubscribe@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+unsubscribe@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def unsubscribe(message, group_name=None, host=None):
 
@@ -236,7 +236,7 @@ def unsubscribe(message, group_name=None, host=None):
         relay.deliver(mail)
 
 
-@route("(group_name)\\+info@(host)", group_name=".+", host=HOST)
+@route("(group_name)\\+info@(host)", group_name=".+", host=HOST_REGEX)
 @stateless
 def info(message, group_name=None, host=None):
 
@@ -650,7 +650,7 @@ handler_funcs = {
     'squadbox' : handle_post_squadbox,
 }
 
-@route("(address)@(host)", address=".+", host=HOST)
+@route("(address)@(host)", address=".+", host=HOST_REGEX)
 @stateless
 def handle_post(message, address=None, host=None):
     
@@ -694,7 +694,7 @@ def handle_post(message, address=None, host=None):
     handler_funcs[WEBSITE](message, group, host, verified)
 
 
-@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=FOLLOW_SUFFIX+"|"+FOLLOW_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=FOLLOW_SUFFIX+"|"+FOLLOW_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_follow(message, group_name=None, thread_id=None, suffix=None, host=None):
 
@@ -714,7 +714,7 @@ def handle_follow(message, group_name=None, thread_id=None, suffix=None, host=No
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=UNFOLLOW_SUFFIX+"|"+UNFOLLOW_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=UNFOLLOW_SUFFIX+"|"+UNFOLLOW_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_unfollow(message, group_name=None, thread_id=None, suffix=None, host=None):
 
@@ -735,7 +735,7 @@ def handle_unfollow(message, group_name=None, thread_id=None, suffix=None, host=
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=MUTE_SUFFIX+"|"+MUTE_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=MUTE_SUFFIX+"|"+MUTE_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_mute(message, group_name=None, thread_id=None, suffix=None, host=None):
 
@@ -755,7 +755,7 @@ def handle_mute(message, group_name=None, thread_id=None, suffix=None, host=None
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=UNMUTE_SUFFIX+"|"+UNMUTE_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(thread_id)(suffix)@(host)", group_name=".+", thread_id=".+", suffix=UNMUTE_SUFFIX+"|"+UNMUTE_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_unmute(message, group_name=None, thread_id=None, suffix=None, host=None):
 
@@ -775,7 +775,7 @@ def handle_unmute(message, group_name=None, thread_id=None, suffix=None, host=No
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=FOLLOW_TAG_SUFFIX+"|"+FOLLOW_TAG_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=FOLLOW_TAG_SUFFIX+"|"+FOLLOW_TAG_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_follow_tag(message, group_name=None, tag_name=None, suffix=None, host=None):
 
@@ -795,7 +795,7 @@ def handle_follow_tag(message, group_name=None, tag_name=None, suffix=None, host
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=UNFOLLOW_TAG_SUFFIX+"|"+UNFOLLOW_TAG_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=UNFOLLOW_TAG_SUFFIX+"|"+UNFOLLOW_TAG_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_unfollow_tag(message, group_name=None, tag_name=None, suffix=None, host=None):
 
@@ -816,7 +816,7 @@ def handle_unfollow_tag(message, group_name=None, tag_name=None, suffix=None, ho
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=MUTE_TAG_SUFFIX+"|"+MUTE_TAG_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=MUTE_TAG_SUFFIX+"|"+MUTE_TAG_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_mute_tag(message, group_name=None, tag_name=None, suffix=None, host=None):
 
@@ -836,7 +836,7 @@ def handle_mute_tag(message, group_name=None, tag_name=None, suffix=None, host=N
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=UNMUTE_TAG_SUFFIX+"|"+UNMUTE_TAG_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(tag_name)(suffix)@(host)", group_name=".+", tag_name=".+", suffix=UNMUTE_TAG_SUFFIX+"|"+UNMUTE_TAG_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_unmute_tag(message, group_name=None, tag_name=None, suffix=None, host=None):
 
@@ -856,7 +856,7 @@ def handle_unmute_tag(message, group_name=None, tag_name=None, suffix=None, host
         relay.deliver(mail)
 
 
-@route("(group_name)\\+(post_id)(suffix)@(host)", group_name=".+", post_id=".+", suffix=UPVOTE_SUFFIX+"|"+UPVOTE_SUFFIX.upper(), host=HOST)
+@route("(group_name)\\+(post_id)(suffix)@(host)", group_name=".+", post_id=".+", suffix=UPVOTE_SUFFIX+"|"+UPVOTE_SUFFIX.upper(), host=HOST_REGEX)
 @stateless
 def handle_upvote(message, group_name=None, post_id=None, suffix=None, host=None):
 
@@ -878,7 +878,7 @@ def handle_upvote(message, group_name=None, post_id=None, suffix=None, host=None
         mail = MailResponse(From = NO_REPLY, To = addr, Subject = subject, Body = body)
         relay.deliver(mail)
 
-@route("(address)@(host)", address="help", host=HOST)
+@route("(address)@(host)", address="help", host=HOST_REGEX)
 @stateless
 def help(message, address=None, host=None):
 

@@ -1713,7 +1713,7 @@ def group_by_thread(posts_list):
             else:
                 sender = p['from']
                 if not isinstance(sender, unicode):
-                    sender = unicode(name, 'utf-8', 'ignore')
+                    sender = unicode(sender, 'utf-8', 'ignore')
 
                 senders.add(sender)
 

@@ -55,14 +55,17 @@ except IOError:
     print "Unable to open configuration file!"
 
 if ENV == 'prod':
-    BASE_URL = 'squadbox.csail.mit.edu'
+    BASE_URL = 'squadbox.org'
     MYSQL = MYSQL_PROD
+    HOST_REGEX = 'squadbox.org|squadbox.csail.mit.edu'
 elif ENV == 'staging':
     BASE_URL = 'murmur-dev.csail.mit.edu'
     MYSQL = MYSQL_DEV
+    HOST_REGEX = BASE_URL
 else:
     BASE_URL = 'localhost:8000'
     MYSQL = MYSQL_LOCAL
+    HOST_REGEX = BASE_URL
 
 TEMPLATE_DEBUG = DEBUG
 

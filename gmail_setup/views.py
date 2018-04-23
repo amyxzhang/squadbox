@@ -86,11 +86,14 @@ def auth(request):
         d = json.load(json_data)
         print "DATA:", d
 
+    print "creating flow"
     FLOW = flow_from_clientsecrets(
         CLIENT_SECRETS,
         scope='https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.settings.basic https://www.googleapis.com/auth/gmail.modify',
         redirect_uri=REDIRECT_URI
     )
+
+    print "got flow"
 
     FLOW.params['access_type'] = 'offline'
 

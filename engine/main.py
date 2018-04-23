@@ -1562,6 +1562,18 @@ def update_post_status(user, group_name, post_id, new_status, explanation=None, 
 
                 elif new_status == 'R':
                     reason = 'moderator rejected'
+                    try:
+                        mail_service = build_services(admin)['mail']
+                        updated_count = untrash_message(mail_service, p.poster_email, p.subject, rejected=True, tags=tags.split(',') + ['rejected'])
+                        if updated_count > 0:
+                            logging.error("untrashed count: %s" % updated_count)
+                            logging.debug(res)
+                            return res 
+                    except Exception, e:
+                        logging.error(e)
+                        pass
+
+
 
                 tags = [t.tag.name for t in TagThread.objects.filter(thread = p.thread)]
 

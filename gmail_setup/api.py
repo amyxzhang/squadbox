@@ -5,11 +5,11 @@ from oauth2client.django_orm import Storage
 from http_handler.settings import BASE_URL
 from schema.models import CredentialsModel
 
-def untrash_message(service_mail, sender_addr, subject):
+def untrash_message(service_mail, sender_addr, subject, rejected=False, tags=[]):
 
     messages = service_mail.users().messages()
 
-    query = 'subject:%s from:%s in:trash' % (subject.split(' ')[0], sender_addr)
+    query = 'subject:%s from:%s in:trash' % (subject, sender_addr)
     logging.debug("QUERY:", query)
     res1 = messages.list(userId='me', q=query).execute()
     logging.debug("res1:", res1)
@@ -17,15 +17,33 @@ def untrash_message(service_mail, sender_addr, subject):
         logging.debug("no results")
         return 0
 
+
+    labelsToAdd = []
+    labelService = service_mail.users().labels()
+    userLabels = labelService.list(userId='me').execute()
+    allLabels = list(userLabels['labels'])
+
+    for tag in tags:
+        match = list(filter(lambda label: label["name"].lower() == tag.lower(), allLabels))
+        if len(match) == 0:
+            label = {'name': tag}
+            response = labelService.create(userId='me', body=label).execute()
+            labelsToAdd.append(response['id'])
+        else:
+            labelsToAdd.append(match[0]['id'])
+
     updated_count = 0
     for m in res1['messages']:
         gmail_msg_id = m['id']
         # res2 = messages.untrash(userId='me', id=gmail_msg_id).execute()
         # updated_count += 1
         # logging.debug("res2:", res2)
+        if 'SPAM' not in labelsToAdd and not rejected:
+            labelsToAdd.append('INBOX')
+
         new_labels = {
             'removeLabelIds' : ['TRASH'],
-            'addLabelIds' : ['INBOX']
+            'addLabelIds' : labelsToAdd
         }
         res3 = messages.modify(userId='me', id=gmail_msg_id, body=new_labels).execute()
         updated_count += 1

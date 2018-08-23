@@ -5,12 +5,25 @@
 	<div class="main-area-content">
 	<div hidden id='group-name'>{{ active_group.name }} </div>
 	<div hidden id='post-id'>{{ thread.post.id }}</div>
+	<div hidden id='post-subject-hidden'>{{thread.post.subject}}</div>
 	<div hidden id='sender-email'>{{ thread.post.from }}</div>
 		<div>
 			<div>
-				<h3><span id="post-subject">{{ thread.post.subject }}</span></h3>
+				<h3><span id="post-subject">
+					{% if thread.post.obfuscated_subject %}
+						<del>{{ thread.post.subject}}</del>
+					{% else %}
+						{{ thread.post.subject }}
+					{% endif %}
+				</span></h3>
 				<span class="strong">From: </span> 
-				<span class="strong-gray" id="post-from">{{ thread.post.from }} </span>
+				<span class="strong-gray" id="post-from">
+					{% if thread.post.obfuscated_email %}
+						<del>{{ thread.post.obfuscated_email }}</del>
+					{% else %}
+						{{ thread.post.from }}
+					{% endif %}
+				</span>
 				{% if thread.post.verified %}
 					<span class="verified" title="The message has been verified as being sent by this email server.">&#10004;</span>
 				{% else %}
@@ -31,7 +44,7 @@
 			</div>
 		</div>
 		<hr>
-		<div>			
+		<div id="post-text">			
 		{% autoescape off %}
 		{{ thread.post.text }}
 		{% endautoescape %}
@@ -53,6 +66,17 @@
 	<br>
 	<a href="" data-toggle="modal" data-target="#mod-rules-modal"><i>review squad owner's preferences</i></a><br><br>
 
+	<button id="obfuscate"><span data-toggle="tooltip" title="Selectively highlight text to obfuscate">&#9998;</span></button> 
+	<br><br>
+	<a id='clear' style='display:none'>Clear all</a>
+	<br><br>
+	<!-- <input type="checkbox" id='obfuscate-name' {% if thread.post.obfuscated_email %}checked{% endif %}> 
+		Email
+	</input> <br>
+	<input type="checkbox" id='obfuscate-subject' {% if thread.post.obfuscated_subject %}checked{% endif %}>
+		Subject
+	</input> <br>	 -->
+
 	<label class="radio-inline"><input type="radio" id="approve-radio" name="approve-reject" value="approve">Approve</label>
 	<label class="radio-inline"><input type="radio" id="reject-radio" name="approve-reject" value="reject">Reject</label>
 	<br><br>
@@ -63,6 +87,7 @@
 		<input type="checkbox" id='whitelist-check'> Add sender {{thread.post.from}} to whitelist</input> 
 		<span data-toggle="tooltip" title="Emails from {{thread.post.from}} will automatically be approved in the future.">&#9432;</span>
 		<br>
+		
 	{% endif %}
 	</div>
 
@@ -117,7 +142,13 @@
 		{% for reply in thread.replies %}
 			<div class="reply">
 				<div class="main-area-content">
-					<span class="strong">{{ reply.from }}</span> on {{ reply.timestamp }}
+					<span class="strong">
+						{% if reply.obfuscated %}
+							<del>{{ reply.from }}</del>
+						{% else %}
+							{{ reply.from}}
+						{% endif %}
+					</span> on {{ reply.timestamp }}
 					{% if reply.attachments %}
 						| Attachments:
 						{% for name, url in reply.attachments %}

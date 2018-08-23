@@ -182,6 +182,9 @@ elif WEBSITE == 'squadbox':
                     url(r'^delete_posts', 'browser.views.delete_posts'),
                     url(r'^delete_post', 'browser.views.delete_post'),
 
+                    url(r'^obfuscate_email', 'browser.views.obfuscate_email'),
+                    url(r'^obfuscate_subject', 'browser.views.obfuscate_subject'),
+
                     url(r'^whitelist_get', 'browser.views.whitelist_get'),
                     url(r'^whitelist', 'browser.views.whitelist'),
                     url(r'^groups/(?P<group_name>[\w-]+)/add_whitelist', 'browser.views.add_whitelist_view'),

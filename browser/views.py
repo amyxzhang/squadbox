@@ -1283,6 +1283,35 @@ def unupvote_get(request):
 	else:
 		return redirect(global_settings.LOGIN_URL + "?next=/unupvote_get?post_id=" + request.GET.get('post_id'))
 
+@login_required
+def obfuscate_email(request):
+	try:
+		user = get_object_or_404(UserProfile, email=request.user.email)
+		groups = Group.objects.filter(membergroup__member=user).values("name")
+		group_name = request.POST['group_name']
+		sender_emails = request.POST['senders']
+		res = engine.main.obfuscate_email(user, group_name, sender_emails)
+		return HttpResponse(json.dumps(res), content_type="application/json")
+	except Exception, e:
+		print e
+		logging.debug(e)
+		return HttpResponse(request_error, content_type="application/json")
+
+@login_required
+def obfuscate_subject(request):
+	try:
+		user = get_object_or_404(UserProfile, email=request.user.email)
+		groups = Group.objects.filter(membergroup__member=user).values("name")
+		post_id = request.POST['post_id']
+		sender_emails = request.POST['senders']
+		print('senders are',sender_emails)
+		res = engine.main.obfuscate_subject(user, post_id, sender_emails)
+		return HttpResponse(json.dumps(res), content_type="application/json")
+	except Exception, e:
+		print e
+		logging.debug(e)
+		return HttpResponse(request_error, content_type="application/json")
+	
 @render_to("whitelist.html")
 @login_required
 def blacklist_get(request):

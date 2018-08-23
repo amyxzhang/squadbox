@@ -52,7 +52,7 @@ WEBSITE = _get_website()
 try:
     execfile(SITE_ROOT + '/../private.py')
 except IOError:
-    print "Unable to open configuration file!"
+    print ("Unable to open configuration file!")
 
 if ENV == 'prod':
     BASE_URL = 'squadbox.csail.mit.edu'

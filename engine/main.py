@@ -793,10 +793,13 @@ def load_thread(t, user=None, member=None):
                     'msg_id': p.msg_id, 
                     'thread_id': p.thread_id, 
                     'from': p.author.email if p.author else p.poster_email,
+                    'obfuscated_email': p.obfuscated_sender,
                     'likes': post_likes,
                     'to': p.group.name,
                     'liked': user_liked,
-                    'subject': escape(p.subject), 
+                    'subject': escape(p.subject),
+                    'obfuscated_subject': p.obfuscated_subject,
+                    'obfuscated_post': p.obfuscated_post,
                     'text' : fix_html_and_img_srcs(p.msg_id, p.post),
                     'timestamp': p.timestamp,
                     'attachments': attachments,
@@ -1517,7 +1520,43 @@ def update_blacklist_whitelist(user, group_name, emails, whitelist, blacklist, p
         res['code'] = msg_code['UNKNOWN_ERROR']
 
     logging.debug(res)
-    return res 
+    return res
+
+def obfuscate_email(user, post_id, sender_selections):
+    res = {'status' : False}
+
+    try:
+        p = Post.objects.get(id=post_id)
+        p.obfuscated_sender = json.dumps(sender_selections)
+        print('ranges stored')
+        p.save()
+        print('our ranges are', s.obfuscated_sender)
+        res['status'] = True
+        res['group_name'] = group_name
+        res['obfuscated'] = s.obfuscated_sender
+        
+    except:
+        print('failed obfuscate email in main')
+    return res
+
+def obfuscate_subject(user, post_id, subject_selections):
+    res = {'status' : False}
+
+    try:
+        p = Post.objects.get(id=post_id)
+        print('currently is', p.obfuscated_subject)
+        p.obfuscated_subject = json.dumps(subject_selections)
+        print('ranges stored')
+        p.save()
+        print('our ranges are', p.obfuscated_subject)
+        res['status'] = True
+        res['post_id'] = post_id
+        res['obfuscated'] = p.obfuscated_subject
+        
+    except:
+        print('failed obfuscate subject in main')
+    return res
+    
 
 def update_post_status(user, group_name, post_id, new_status, explanation=None, tags=None):
     res = {'status' : False}
@@ -1662,6 +1701,7 @@ def load_pending_posts(user, group_name):
         mg = MemberGroup.objects.get(member=user, group__name=group_name)
         posts = Post.objects.filter(group__name=group_name, status='P')
         posts_cleaned = fix_posts(posts)
+        print "posts are", posts_cleaned
         print "here"
         grouped = group_by_thread(posts_cleaned)
         res['threads'] = grouped
@@ -1738,19 +1778,19 @@ def group_by_thread(posts_list):
 
         senders = set()
         for p in posts:
+            print p
             if p['from_name']:
                 name = p['from_name']
                 if not isinstance(name, unicode):
                     name = unicode(name, 'utf-8', 'ignore')
 
                 senders.add(name)
-            else:
+            elif p['from']:
                 sender = p['from']
                 if not isinstance(sender, unicode):
-                    sender = unicode(name, 'utf-8', 'ignore')
-
+                    sender = unicode(sender, 'utf-8', 'ignore')
                 senders.add(sender)
-
+                
         thread = {
             'id' : t,
             'num_posts' : len(posts),
@@ -1761,7 +1801,6 @@ def group_by_thread(posts_list):
         }
 
         thread_data.append(thread)
-
     return thread_data
 
 def adjust_moderate_user_for_thread(user, group_name, sender_addr, subject, moderate):

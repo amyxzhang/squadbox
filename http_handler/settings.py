@@ -11,8 +11,6 @@ _ENV_FILE_PATH = '/opt/squadbox/env'
 _DEBUG_FILE_PATH = '/opt/squadbox/debug'
 _WEBSITE_FILE_PATH = '/opt/squadbox/website'
 
-PERSPECTIVE_KEY = ''
-
 def _get_env():
     f = open(_ENV_FILE_PATH)
     env = f.read()
@@ -85,8 +83,8 @@ DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'temp_file',# Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': MYSQL["NAME"],# Or path to database file if using sqlite3.
         'USER': MYSQL["USER"], # Not used with sqlite3.
         'PASSWORD': MYSQL["PASSWORD"],# Not used with sqlite3.
         'HOST': MYSQL["HOST"], # Set to empty string for localhost. Not used with sqlite3.
@@ -226,7 +224,7 @@ INSTALLED_APPS = (
     
     #third party apps
     'registration',
-#    'south',
+    'south',
     'django_mobile',
     'storages'
 )

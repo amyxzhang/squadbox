@@ -1,7 +1,7 @@
 Squadbox uses Django with a MySQL backend (you can replace with any other backend Django supports). For email, we use postfix along with the python lamson library.
 
 ### Installation Instructions
-  
+
 #### Install MySQL Server
 
 #### Install Git and clone this repository
@@ -14,7 +14,8 @@ Squadbox uses Django with a MySQL backend (you can replace with any other backen
 * `/usr/bin/python2.7`
 * pip: `sudo easy_install pip`
 * `sudo pip install virtualenv `
-* create a virtualenv for this project: `virtualenv squadbox-env`
+* create a virtualenv for this project inside squadbox folder: `virtualenv squadbox-env`   
+If you have different version of python on your computer (for instance, if you have anaconda installed), make sure you are using your system's python 2.7 by using the python flag to direct virtualenv to the right directory: `virtualenv --python=/usr/bin/python2.7 squadbox-env`
 * make sure your virtualenv is activated: `source squadbox-env/bin/activate`
 
 #### install required python packages
@@ -42,16 +43,17 @@ Squadbox uses Django with a MySQL backend (you can replace with any other backen
 * configure your relay_server (postfix or something else) in config/settings.py
 * use port other than 25 (default is currently set at 587)
 
-#### setup the database 
+#### setup the database
 * (optional: only during new database setup) change root password by: `set PASSWORD = PASSWORD('newPassword');`
 * `mysql -u root -p`
 * `create database squadbox;`
-* Give privileges to the user that will access the database from django: `grant all privileges ON squadbox.* TO admin@localhost;`
+* Give privileges to the user that will access the database from django: `create user 'admin'@'localhost' identified by 'admin';` `grant all privileges ON squadbox.* TO 'admin'@'localhost';`
 
 #### install schema and create superuser
 * `python manage.py syncdb`and create superuser
 * Convert schema app to be managed by South: `python manage.py schemamigration schema --initial`
 * Then do fake migration:  `python manage.py migrate schema 0001 --fake`
+* If you encounter errors getting django to work with mysql, you can use alternative databases such as sqlite3.
 
 #### run murmur server
 * If running email server: `lamson start`

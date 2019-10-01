@@ -14,7 +14,8 @@ Squadbox uses Django with a MySQL backend (you can replace with any other backen
 * `/usr/bin/python2.7`
 * pip: `sudo easy_install pip`
 * `sudo pip install virtualenv `
-* create a virtualenv for this project inside squadbox folder: `virtualenv --python=/usr/bin/python2.7 squadbox-env`
+* create a virtualenv for this project inside squadbox folder: `virtualenv squadbox-env`   
+If you have different version of python on your computer (for instance, if you have anaconda installed), make sure you are using your system's python 2.7 by using the python flag to direct virtualenv to the right directory: `virtualenv --python=/usr/bin/python2.7 squadbox-env`
 * make sure your virtualenv is activated: `source squadbox-env/bin/activate`
 
 #### install required python packages
@@ -52,7 +53,7 @@ Squadbox uses Django with a MySQL backend (you can replace with any other backen
 * `python manage.py syncdb`and create superuser
 * Convert schema app to be managed by South: `python manage.py schemamigration schema --initial`
 * Then do fake migration:  `python manage.py migrate schema 0001 --fake`
-* If error involving caching_sha2_password is encountered, use sqlite3 instead
+* If you encounter errors getting django to work with mysql, you can use alternative databases such as sqlite3.
 
 #### run murmur server
 * If running email server: `lamson start`

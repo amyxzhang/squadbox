@@ -291,7 +291,6 @@ class UserProfile(AbstractBaseUser):
 		"""
         Sends an email to this User.
         """	
-		print(from_email)
 		send_mail(subject, message, from_email, [self.email], fail_silently=False)
 
 	def has_perm(self, perm, obj=None):

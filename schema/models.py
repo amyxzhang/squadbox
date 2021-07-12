@@ -262,7 +262,7 @@ class MyUserManager(BaseUserManager):
 class UserProfile(AbstractBaseUser):
 	email = models.EmailField(
         verbose_name='email address',
-        max_length=255,
+        max_length=200,
         unique=True,
     )
 	first_name = models.CharField('first name', max_length=30, blank=True)
@@ -291,7 +291,8 @@ class UserProfile(AbstractBaseUser):
 		"""
         Sends an email to this User.
         """	
-		send_mail(subject, message, from_email, [self.email])
+		print(from_email)
+		send_mail(subject, message, from_email, [self.email], fail_silently=False)
 
 	def has_perm(self, perm, obj=None):
 		"Does the user have a specific permission?"

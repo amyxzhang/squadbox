@@ -1,4 +1,4 @@
-Django==1.8.19
+Django==1.11
 Jinja2==2.7.3
 MarkupSafe==0.23
 South==1.0.1

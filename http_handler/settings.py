@@ -50,9 +50,9 @@ def _get_website():
 WEBSITE = _get_website()
 
 try:
-    execfile(SITE_ROOT + '/../private.py')
+    exec(open(SITE_ROOT + '/../private.py').read())
 except IOError:
-    print "Unable to open configuration file!"
+    print ("Unable to open configuration file!")
 
 if ENV == 'prod':
     BASE_URL = 'squadbox.org'

@@ -9,7 +9,7 @@ from django.utils.timezone import utc
 from pytz import utc
 
 
-import api
+import gmail_setup.api as api
 from browser.util import get_groups_links_from_roles
 import engine
 from gmail_setup.api import create_gmail_filter
@@ -81,19 +81,19 @@ def auth(request):
     #REDIRECT_URI = 'https://localhost:8000/gmail_setup/callback'
     REDIRECT_URI = "https://%s%s" % (BASE_URL, reverse("oauth2:return")) 
     #REDIRECT_URI = 'https://' + BASE_URL + '/gmail_setup/callback'
-    print "ACCESSING CLIENT SECRETS"
+    print("ACCESSING CLIENT SECRETS")
     with open(CLIENT_SECRETS) as json_data:
         d = json.load(json_data)
-        print "DATA:", d
+        print("DATA:", d)
 
-    print "creating flow"
+    print("creating flow")
     FLOW = flow_from_clientsecrets(
         CLIENT_SECRETS,
         scope='https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.settings.basic https://www.googleapis.com/auth/gmail.modify',
         redirect_uri=REDIRECT_URI
     )
 
-    print "got flow"
+    print("got flow")
 
     FLOW.params['access_type'] = 'offline'
 
@@ -247,7 +247,7 @@ def import_start(request):
             filter_hash = engine.main.get_or_generate_filter_hash(user, group_name, push=False)['hash']
             try:
                 api.create_gmail_filter(service_mail, emails_to_add, forward_address, filter_hash)
-            except Exception, e:
+            except Exception as e:
                 logging.error("Exception creating gmail filter - probably hit request limit")
                 logging.debug(e)
 

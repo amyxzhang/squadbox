@@ -1,9 +1,9 @@
 import logging, time, base64
-from lamson.routing import route, stateless
+from salmon.routing import route, stateless
 from config.settings import relay
 from http_handler.settings import WEBSITE, HOST_REGEX
 from schema.models import *
-from lamson.mail import MailResponse
+from salmon.mail import MailResponse
 from email.utils import *
 from email import message_from_string
 from engine.main import *

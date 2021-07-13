@@ -54,7 +54,7 @@ def upload_message(message, post_id, msg_id):
             destination.write(message_string)
         res['status'] = True
 
-    except Exception, e:
+    except Exception as e:
         logging.debug("Error uploading original message: %s" % e)
 
     return res

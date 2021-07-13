@@ -1,7 +1,7 @@
 import email, re, time, hashlib, random, dkim, pytz
-from lamson.server import Relay
+from salmon.server import Relay
 from config.settings import *
-from lamson_subclass import MurmurMailResponse
+from smtp_handler.lamson_subclass import MurmurMailResponse
 from schema.models import *
 from http_handler.settings import BASE_URL, DEFAULT_FROM_EMAIL, WEBSITE
 from datetime import datetime, timedelta

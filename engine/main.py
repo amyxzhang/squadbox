@@ -7,16 +7,16 @@ from django.utils.timezone import utc
 from django.db.models import Q
 from email.utils import parseaddr
 from html2text import html2text
-from lamson.mail import MailResponse
+from salmon.mail import MailResponse
 from pytz import utc
 
 from browser.util import *
-from constants import *
+from engine.constants import *
 from engine.constants import extract_hash_tags, ALLOWED_MESSAGE_STATUSES
 from gmail_setup.api import update_gmail_filter, untrash_message
 from gmail_setup.views import build_services
 from http_handler.settings import BASE_URL, WEBSITE, AWS_STORAGE_BUCKET_NAME, PERSPECTIVE_KEY
-from s3_storage import upload_attachments, download_attachments
+from engine.s3_storage import upload_attachments, download_attachments
 from schema.models import *
 from smtp_handler.utils import *
 
@@ -116,7 +116,7 @@ def group_info_page(user, group_name):
             res['code'] = msg_code['NOT_MEMBER']
             res['group'] = None
 
-    except Exception, e:
+    except Exception as e:
         res['code'] = msg_code['UNKNOWN_ERROR']
         logging.debug(e)
     
@@ -212,8 +212,8 @@ def edit_members_table(group_name, toDelete, toAdmin, toMod, user):
                 membergroup.save()
                 email_on_role_change("mod", membergroup.group.name, membergroup.member.email)
         res['status'] = True
-    except Exception, e:
-        print e
+    except Exception as e:
+        print (e)
         logging.debug(e)
     except Group.DoesNotExist:
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
@@ -406,7 +406,7 @@ def add_list(group_name, email, can_receive, can_post, list_url, user):
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['NOT_MEMBER']
-    except Exception, e:
+    except Exception as e:
         res['error'] = e
     except:
         res['code'] = msg_code['UNKNOWN_ERROR']
@@ -429,7 +429,7 @@ def delete_list(group_name, emails, user):
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['NOT_MEMBER']
-    except Exception, e:
+    except Exception as e:
         res['error'] = e
     except:
         res['code'] = msg_code['UNKNOWN_ERROR']
@@ -453,7 +453,7 @@ def adjust_list_can_post(group_name, emails, can_post, user):
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['NOT_MEMBER']
-    except Exception, e:
+    except Exception as e:
         res['error'] = e
     except:
         res['code'] = msg_code['UNKNOWN_ERROR']
@@ -478,7 +478,7 @@ def adjust_list_can_receive(group_name, emails, can_receive, user):
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['NOT_MEMBER']
-    except Exception, e:
+    except Exception as e:
         res['error'] = e
     except:
         res['code'] = msg_code['UNKNOWN_ERROR']
@@ -528,7 +528,7 @@ def add_members(group_name, emails, add_as_mods, user):
                     message += "To manage your squads, subscribe, or unsubscribe, visit <a href='https://%s/groups'>https://%s/my_groups</a><br />" % (BASE_URL, BASE_URL)
     
 
-                    print "MESSAGE: %s" % message
+                    print ("MESSAGE: %s" % message)
                     mail.Html = message
                     logging.debug('TO LIST: ' + str(email))
                     
@@ -719,8 +719,8 @@ def list_posts(group_name=None, user=None, timestamp_str=None, return_replies=Tr
         
         list_posts_page(threads, g, res, user=user, format_datetime=format_datetime, return_replies=return_replies)
             
-    except Exception, e:
-        print e
+    except Exception as e:
+        print (e)
         res['code'] = msg_code['UNKNOWN_ERROR']
     logging.debug(res)
     return res
@@ -749,7 +749,7 @@ def load_thread(t, user=None, member=None):
     replies = []
     post = None
 
-    print "postS: ", posts
+    print ("postS: ", posts)
     
     for p in posts:
         post_likes = p.upvote_set.count()
@@ -881,7 +881,7 @@ def _create_post(group, subject, message_text, user, sender_addr, msg_id, verifi
 
     try:
         message_text = message_text.decode("utf-8")
-    except Exception, _:
+    except Exception as  _:
         logging.debug("guessing this is unicode then")
 
     message_text = message_text.encode("ascii", "ignore")
@@ -996,8 +996,8 @@ def insert_post_web(group_name, subject, message_text, user):
             res['code'] = msg_code['NOT_MEMBER']
     except Group.DoesNotExist:
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
-    except Exception, e:
-        print e
+    except Exception as e:
+        print (e)
         logging.debug(e)
         if(thread and thread.id):
             thread.delete()
@@ -1025,7 +1025,7 @@ def insert_post(group_name, subject, message_text, user, sender_addr, msg_id, ve
     except Group.DoesNotExist:
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
 
-    except Exception, e:
+    except Exception as e:
         logging.debug(e)
         if(thread and thread.id):
             thread.delete()
@@ -1105,7 +1105,7 @@ def insert_reply(group_name, subject, message_text, user, sender_addr, msg_id, v
             tag_objs = Tag.objects.filter(tagthread__thread=thread)
             try:
                 message_text = message_text.decode("utf-8")
-            except Exception, e:
+            except Exception as e:
                 logging.debug("guessing this is unicode then")
             
             message_text = message_text.encode("ascii", "ignore")
@@ -1282,8 +1282,8 @@ def unfollow_thread(thread_id, email=None, user=None):
         res['group_name'] = t.group.name
     except Thread.DoesNotExist:
         res['code'] = msg_code['THREAD_NOT_FOUND_ERROR']
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         res['code'] = msg_code['UNKNOWN_ERROR']
     logging.debug(res)
     return res
@@ -1337,8 +1337,8 @@ def unmute_thread(thread_id, email=None, user=None):
         res['group_name'] = t.group.name
     except Thread.DoesNotExist:
         res['code'] = msg_code['THREAD_NOT_FOUND_ERROR']
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         res['code'] = msg_code['UNKNOWN_ERROR']
     logging.debug(res)
     return res
@@ -1383,8 +1383,8 @@ def unfollow_tag(tag_name, group_name, user=None, email=None):
         res['status'] = True
     except Tag.DoesNotExist:
         res['code'] = msg_code['TAG_NOT_FOUND_ERROR']
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         res['code'] = msg_code['UNKNOWN_ERROR']
     logging.debug(res)
     return res
@@ -1429,8 +1429,8 @@ def unmute_tag(tag_name, group_name, user=None, email=None):
         res['status'] = True
     except Tag.DoesNotExist:
         res['code'] = msg_code['TAG_NOT_FOUND_ERROR']
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         res['code'] = msg_code['UNKNOWN_ERROR']
     logging.debug(res)
     return res
@@ -1487,8 +1487,8 @@ def update_blacklist_whitelist(user, group_name, emails, whitelist, blacklist, p
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['PRIVILEGE_ERROR']
 
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         res['code'] = msg_code['UNKNOWN_ERROR']
 
     logging.debug(res)
@@ -1556,7 +1556,7 @@ def update_post_status(user, group_name, post_id, new_status, explanation=None, 
                             logging.error("untrashed count: %s" % updated_count)
                             logging.debug(res)
                             return res 
-                    except Exception, e:
+                    except Exception as e:
                         logging.error(e)
                         pass
 
@@ -1569,7 +1569,7 @@ def update_post_status(user, group_name, post_id, new_status, explanation=None, 
                             logging.error("untrashed count: %s" % updated_count)
                             logging.debug(res)
                             return res 
-                    except Exception, e:
+                    except Exception as e:
                         logging.error(e)
                         pass
 
@@ -1627,8 +1627,8 @@ def update_post_status(user, group_name, post_id, new_status, explanation=None, 
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['PRIVILEGE_ERROR']
 
-    except Exception, e:
-        print e
+    except Exception as e:
+        print (e)
         res['code'] = msg_code['UNKNOWN_ERROR']
 
     logging.debug(res)
@@ -1640,24 +1640,24 @@ def load_pending_posts(user, group_name):
         mg = MemberGroup.objects.get(member=user, group__name=group_name)
         posts = Post.objects.filter(group__name=group_name, status='P')
         posts_cleaned = fix_posts(posts)
-        print "here"
+        print ("here")
         grouped = group_by_thread(posts_cleaned)
         res['threads'] = grouped
         res['status'] = True
 
-    except MemberGroup.DoesNotExist:
+    except MemberGroup.DoesNotExist as e:
         logging.debug(e)
         res['status'] = False
         res['code'] = msg_code['NOT_MEMBER']
         res['error'] = e
 
-    except Exception, e:
+    except Exception as e:
         logging.debug(e)
         res['status'] = False
         res['code'] = msg_code['UNKNOWN_ERROR']
         res['error'] = e
 
-    print "res:!!!!", res
+    print ("res:!!!!", res)
     return res
 
 def load_rejected_posts(user, group_name):
@@ -1676,7 +1676,7 @@ def load_rejected_posts(user, group_name):
         res['code'] = msg_code['GROUP_NOT_FOUND_ERROR']
     except MemberGroup.DoesNotExist:
         res['code'] = msg_code['PRIVILEGE_ERROR']
-    except Exception, e:
+    except Exception as e:
         logging.debug(e)
         res['code'] = msg_code['UNKNOWN_ERROR']
         res['error'] = e
@@ -1777,8 +1777,8 @@ def get_or_generate_filter_hash(user, group_name, push=True):
 
         if mg.gmail_filter_hash is None: #or now - last_update >  timedelta(hours=24):
 
-            salt = hashlib.sha1(str(random.random())+str(time.time())).hexdigest()
-            new_hash = hashlib.sha1(user.email + group_name + salt).hexdigest()[:20]    
+            salt = hashlib.sha1((str(random.random())+str(time.time())).encode('utf-8')).hexdigest()
+            new_hash = hashlib.sha1((user.email + group_name + salt).encode('utf-8')).hexdigest()[:20]    
             
             mg.gmail_filter_hash = new_hash
             mg.last_updated_hash = now 

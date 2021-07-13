@@ -7,9 +7,9 @@ import django
 DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-_ENV_FILE_PATH = '/opt/squadbox/env'
-_DEBUG_FILE_PATH = '/opt/squadbox/debug'
-_WEBSITE_FILE_PATH = '/opt/squadbox/website'
+_ENV_FILE_PATH = 'opt/squadbox/env'
+_DEBUG_FILE_PATH = 'opt/squadbox/debug'
+_WEBSITE_FILE_PATH = 'opt/squadbox/website'
 
 def _get_env():
     f = open(_ENV_FILE_PATH)
@@ -63,7 +63,7 @@ elif ENV == 'staging':
     MYSQL = MYSQL_DEV
     HOST_REGEX = BASE_URL
 else:
-    BASE_URL = 'localhost:8000'
+    BASE_URL = 'gmail.com'
     MYSQL = MYSQL_LOCAL
     HOST_REGEX = BASE_URL
 
@@ -71,13 +71,13 @@ TEMPLATE_DEBUG = DEBUG
 
 LOGIN_REDIRECT_URL = "/"
 
-EMAIL_HOST = 'localhost'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_USE_TLS = False
-DEFAULT_EMAIL = 'no-reply@' + BASE_URL
+EMAIL_HOST_USER = 'matthewzgong@gmail.com'
+EMAIL_HOST_PASSWORD = 'Linlin-2002'
+EMAIL_USE_TLS = True
+DEFAULT_EMAIL = 'matthewzgong@' + BASE_URL
 DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
 
 
@@ -224,7 +224,7 @@ INSTALLED_APPS = (
     
     #third party apps
     'registration',
-    'south',
+    # 'south',
     'django_mobile',
     'storages'
 )
@@ -282,3 +282,5 @@ except ImportError:
 # Storage for attachments
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_DEFAULT_ACL = 'private'
+
+PERSPECTIVE_KEY = ""

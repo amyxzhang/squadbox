@@ -24,7 +24,6 @@ consult a specific backend's documentation for details.
 """
 
 from django.conf.urls import include
-from django.conf.urls import patterns
 from django.conf.urls import url
 
 from django.contrib.auth import views as auth_views
@@ -32,7 +31,7 @@ from browser.views import murmur_acct
 
 from http_handler.settings import WEBSITE
 
-urlpatterns = patterns('',
+urlpatterns = [
                        url(r'^login/$',
                            auth_views.login,
                            {'template_name': 'registration/login.html',
@@ -67,4 +66,4 @@ urlpatterns = patterns('',
                        url(r'^password/reset/done/$',
                            auth_views.password_reset_done,
                            name='auth_password_reset_done'),
-)
+]

@@ -4,8 +4,8 @@ MarkupSafe==0.23
 South==1.0.1
 bleach==1.4
 chardet==2.3.0
-django-annoying==0.8.0
-django-appconf==0.6
+django-annoying==0.10.4
+django-appconf==1.0
 django-compressor==1.4
 django-gravatar==0.1.0
 django-mobile==0.7.0
@@ -23,7 +23,7 @@ python-modargs==1.7
 six==1.8.0
 wsgiref==0.1.2
 pytz==2016.7
-oauth2client==1.5.2
+oauth2client==2.2.0
 python-gflags==3.1.0
 google-api-python-client==1.6.1
 python-gnupg==0.4.0

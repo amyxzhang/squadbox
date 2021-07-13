@@ -8,7 +8,7 @@ from lamson.mail import MailResponse
 from django.conf import global_settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models.aggregates import Count

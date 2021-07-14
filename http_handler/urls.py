@@ -11,7 +11,7 @@ from registration.forms import MurmurPasswordResetForm
 import browser.views
 
 website_context = {'website' : WEBSITE}
-
+app_name = WEBSITE
 # shared URL patterns 
 urlpatterns = [
 
@@ -44,7 +44,7 @@ urlpatterns = [
     url(r'^group_settings', browser.views.get_group_settings),
     url(r'^groups/(?P<group_name>[\w-]+)/edit_my_settings', browser.views.my_group_settings_view),
 
-    url(r'^gmail_setup/', include('gmail_setup.urls', namespace="oauth2")),
+    url(r'^gmail_setup/', include(('gmail_setup.urls', "oauth2"), namespace="oauth2")),
      
     #override the registration default urls - bug with django 1.6
     url(r'^accounts/password/change/$',
@@ -202,3 +202,4 @@ elif WEBSITE == 'squadbox':
                     ]
 
     urlpatterns.extend(new_patterns)
+

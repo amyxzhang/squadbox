@@ -159,29 +159,35 @@ SECRET_KEY = 'fr&amp;qg*+c!z6q_^v6o1kzd6lxj-3m3q-=oku8f52*c+@)+1hnx+'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django_mobile.loader.Loader',
+    # 'django_mobile.loader.Loader',
     
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django_mobile.context_processors.flavour',
+    # 'django_mobile.context_processors.flavour',
     
 )
 
-MIDDLEWARE_CLASSES = (
+    # 'django.middleware.common.CommonMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
+
+
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     
-    'django_mobile.middleware.MobileDetectionMiddleware',
-    'django_mobile.middleware.SetFlavourMiddleware',
+    # 'django_mobile.middleware.MobileDetectionMiddleware',
+    # 'django_mobile.middleware.SetFlavourMiddleware',
     
 )
 
@@ -225,7 +231,7 @@ INSTALLED_APPS = (
     #third party apps
     'registration',
     # 'south',
-    'django_mobile',
+    # 'django_mobile',
     'storages'
 )
 

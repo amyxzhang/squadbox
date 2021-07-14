@@ -23,7 +23,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render, render_to_response
 from oauth2client.contrib import xsrfutil
 from oauth2client.client import flow_from_clientsecrets

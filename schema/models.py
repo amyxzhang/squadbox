@@ -11,15 +11,15 @@ from http_handler.settings import AUTH_USER_MODEL
 
 class Post(models.Model):
 	id = models.AutoField(primary_key=True)
-	author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_authored_posts', null=True)
+	author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_authored_posts', null=True, on_delete=models.CASCADE)
 	subject = models.TextField()
 	msg_id = models.CharField(max_length=120, unique=True)
 	post = models.TextField()
-	group = models.ForeignKey('Group')
-	thread = models.ForeignKey('Thread')
-	reply_to = models.ForeignKey('self', blank=False, null=True, related_name="replies")
+	group = models.ForeignKey('Group' , on_delete=models.CASCADE)
+	thread = models.ForeignKey('Thread' , on_delete=models.CASCADE )
+	reply_to = models.ForeignKey('self', blank=False, null=True, related_name="replies" , on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
-	forwarding_list = models.ForeignKey('ForwardingList', null=True)
+	forwarding_list = models.ForeignKey('ForwardingList', null=True , on_delete=models.CASCADE)
 	verified_sender = models.BooleanField(default=False)
 	# a post's author is the Murmur user (if any) who wrote the post.
 	# a post's poster_email is the email address of the user who originally
@@ -42,7 +42,7 @@ class Post(models.Model):
 	mod_explanation = models.TextField(null=True)
 
 	# who the moderator that approved or rejected this message was
-	who_moderated = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_moderated_posts', null=True)
+	who_moderated = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_moderated_posts', null=True,  on_delete=models.CASCADE)
 
 	perspective_data = JSONField(null=True)
 
@@ -71,7 +71,7 @@ class Thread(models.Model):
 	id = models.AutoField(primary_key=True)
 	subject = models.TextField()
 	timestamp = models.DateTimeField(auto_now=True)
-	group = models.ForeignKey('Group')
+	group = models.ForeignKey('Group' , on_delete=models.CASCADE)
 
 	def __unicode__(self):
 		return '%s in %s' % (self.id, self.group)
@@ -82,8 +82,8 @@ class Thread(models.Model):
 
 
 class TagThread(models.Model):
-	thread = models.ForeignKey('Thread')
-	tag = models.ForeignKey('Tag')
+	thread = models.ForeignKey('Thread' , on_delete=models.CASCADE)
+	tag = models.ForeignKey('Tag' , on_delete=models.CASCADE)
 		
 	def __unicode__(self):
 		return '%s tag for Thread %s' % (self.tag.name, self.thread.id)
@@ -97,7 +97,7 @@ someone who already posted in the thread, should go through
 moderation. 
 '''
 class ThreadHash(models.Model):
-	group = models.ForeignKey('Group')
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
 
 	# we store a hash so that we don't keep information about
 	# this thread once all its posts are approved.
@@ -111,7 +111,7 @@ class ThreadHash(models.Model):
 		
 class Tag(models.Model):
 	id = models.AutoField(primary_key=True)
-	group = models.ForeignKey('Group')
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
 	color = models.CharField(max_length=6)
 	name = models.CharField(max_length=20)
 	
@@ -123,9 +123,9 @@ class Tag(models.Model):
 		
 class FollowTag(models.Model):
 	id = models.AutoField(primary_key=True)
-	user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	group = models.ForeignKey('Group')
-	tag = models.ForeignKey('Tag')
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
+	tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
@@ -136,9 +136,9 @@ class FollowTag(models.Model):
 
 class MuteTag(models.Model):
 	id = models.AutoField(primary_key=True)
-	user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	group = models.ForeignKey('Group')
-	tag = models.ForeignKey('Tag')
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
+	tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
@@ -150,8 +150,8 @@ class MuteTag(models.Model):
 
 class MemberGroup(models.Model):
 	id = models.AutoField(primary_key=True)
-	member = models.ForeignKey(settings.AUTH_USER_MODEL)
-	group = models.ForeignKey('Group')
+	member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	admin = models.BooleanField(default=False)
 	moderator = models.BooleanField(default=False)
@@ -172,8 +172,8 @@ class MemberGroup(models.Model):
 
 class MemberGroupPending(models.Model):
 	id = models.AutoField(primary_key=True)
-	member = models.ForeignKey(settings.AUTH_USER_MODEL)
-	group = models.ForeignKey('Group')
+	member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	hash = models.CharField(max_length=40)
 	
@@ -188,7 +188,7 @@ class ForwardingList(models.Model):
 	id = models.AutoField(primary_key=True)
 	email = models.EmailField(verbose_name='email address',max_length=255)
 	timestamp = models.DateTimeField(auto_now=True)
-	group = models.ForeignKey('Group')
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
 	url = models.URLField(null=True, blank=True)
 	can_post = models.BooleanField(default=False)
 	can_receive = models.BooleanField(default=False)
@@ -222,7 +222,7 @@ class Group(models.Model):
 
 class WhiteOrBlacklist(models.Model):
 	id = models.AutoField(primary_key=True)
-	group = models.ForeignKey('Group')
+	group = models.ForeignKey('Group', on_delete=models.CASCADE)
 	email = models.EmailField(max_length=255)
 
 	# only one of the following can be true
@@ -309,8 +309,8 @@ class UserProfile(AbstractBaseUser):
 
 class Following(models.Model):
 	id = models.AutoField(primary_key=True)
-	thread = models.ForeignKey('Thread')
-	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	thread = models.ForeignKey('Thread', on_delete=models.CASCADE)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
@@ -322,8 +322,8 @@ class Following(models.Model):
 
 class Mute(models.Model):
 	id = models.AutoField(primary_key=True)
-	thread = models.ForeignKey('Thread')
-	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	thread = models.ForeignKey('Thread', on_delete=models.CASCADE)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
@@ -334,8 +334,8 @@ class Mute(models.Model):
 
 class Upvote(models.Model):
 	id = models.AutoField(primary_key=True)
-	post = models.ForeignKey('Post')
-	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	post = models.ForeignKey('Post', on_delete=models.CASCADE)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
@@ -345,12 +345,12 @@ class Upvote(models.Model):
 		db_table = "murmur_likes"
 
 class FlowModel(models.Model):
-    id = models.ForeignKey(AUTH_USER_MODEL, primary_key=True)
+    id = models.ForeignKey(AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
     flow = FlowField()
  
  
 class CredentialsModel(models.Model):
-    id = models.ForeignKey(AUTH_USER_MODEL, primary_key=True)
+    id = models.ForeignKey(AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
     credential = CredentialsField()
 
 # from south.modelsinspector import add_introspection_rules

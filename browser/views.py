@@ -1,6 +1,6 @@
 import base64, json, logging
 
-from annoying.decorators import render_to
+from browser.api import render_to
 from boto.s3.connection import S3Connection
 from html2text import html2text
 # from lamson.mail import MailResponse
@@ -13,7 +13,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models.aggregates import Count
 from django.http import *
-from django.shortcuts import get_object_or_404, redirect, render_to_response, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.context import RequestContext
 from django.utils.encoding import *
 
@@ -1628,6 +1628,7 @@ def mod_queue(request, group_name):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 
 		mgs = MemberGroup.objects.filter(member=user, group__name=group_name)
+		print("what is up")
 		if not mgs.exists():
 			return redirect('404/e=member')
 

@@ -1638,6 +1638,7 @@ def load_pending_posts(user, group_name):
     res = {'status' : False}
     try:
         mg = MemberGroup.objects.get(member=user, group__name=group_name)
+        print(user,group_name)
         posts = Post.objects.filter(group__name=group_name, status='P')
         posts_cleaned = fix_posts(posts)
         print ("here")

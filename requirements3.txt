@@ -4,9 +4,8 @@ MarkupSafe==0.23
 South==1.0.1
 bleach==1.4
 chardet==3.0.2
-django-annoying==0.10.4
 django-appconf==1.0
-django-compressor==1.4
+django-compressor==2.4.1
 django-gravatar==0.1.0
 django-mobile==0.7.0
 django-registration==1.0
@@ -37,5 +36,5 @@ py3dns==3.2.1
 # pydns==2.3.6
 beautifulsoup4==4.6.0
 requests==2.18.4
-jsonfield==1.0.3
+jsonfield==3.1.0
 salmon-mail==3.2.0

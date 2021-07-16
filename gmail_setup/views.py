@@ -16,7 +16,7 @@ from gmail_setup.api import create_gmail_filter
 from http_handler.settings import BASE_URL, WEBSITE
 from schema.models import CredentialsModel, FlowModel, Group
 
-from annoying.decorators import render_to
+from browser.api import render_to
 from apiclient.discovery import build
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
@@ -24,7 +24,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from oauth2client.contrib import xsrfutil
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.contrib.django_orm import Storage

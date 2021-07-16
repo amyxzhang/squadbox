@@ -1,3 +1,4 @@
+
 from django.conf.urls import  include, url
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
@@ -9,12 +10,13 @@ from registration.forms import MurmurPasswordResetForm
 # from django.contrib import admin
 # admin.autodiscover()
 import browser.views
+import twitter_api.views 
 
 website_context = {'website' : WEBSITE}
 app_name = WEBSITE
 # shared URL patterns 
 urlpatterns = [
-
+    url('webhook/twitter/', twitter_api.views.crc_response),
     url(r'^$', browser.views.index),
     url(r'^lamson_status', browser.views.lamson_status),
     url(r'^settings', browser.views.settings),

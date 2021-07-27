@@ -63,7 +63,7 @@ elif ENV == 'staging':
     MYSQL = MYSQL_DEV
     HOST_REGEX = BASE_URL
 else:
-    BASE_URL = 'gmail.com'
+    BASE_URL = 'localhost:8000'
     MYSQL = MYSQL_LOCAL
     HOST_REGEX = BASE_URL
 
@@ -71,15 +71,14 @@ TEMPLATE_DEBUG = DEBUG
 
 LOGIN_REDIRECT_URL = "/"
 
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'localhost'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = True
-DEFAULT_EMAIL = '' + BASE_URL
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_EMAIL = 'no-reply@' + BASE_URL
 DEFAULT_FROM_EMAIL = DEFAULT_EMAIL
-
 
 DATABASES = {
     'default': {

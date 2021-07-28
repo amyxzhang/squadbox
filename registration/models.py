@@ -11,12 +11,12 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from http_handler.settings import WEBSITE
-
-try:
-    from django.contrib.auth import get_user_model
-    User = settings.AUTH_USER_MODEL
-except ImportError:
-    from schema.models import UserProfile as User
+from schema.models import UserProfile as User
+# try:
+#     from django.contrib.auth import get_user_model
+#     User = settings.AUTH_USER_MODEL
+# except ImportError:
+#     from schema.models import UserProfile as User
 
 try:
     from django.utils.timezone import now as datetime_now
@@ -83,6 +83,7 @@ class RegistrationManager(models.Manager):
         user. To disable this, pass ``send_email=False``.
         
         """
+        
         new_user = User.objects.create_user(email, password)
         new_user.is_active = False
         new_user.save()
@@ -105,11 +106,11 @@ class RegistrationManager(models.Manager):
         username and a random salt.
         
         """
-        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+        salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         email = user.email
-        if isinstance(email, unicode):
+        if isinstance(email, str):
             email = email.encode('utf-8')
-        activation_key = hashlib.sha1(salt+email).hexdigest()
+        activation_key = hashlib.sha1((salt+email.decode()).encode('utf-8')).hexdigest()
         return self.create(user=user,
                            activation_key=activation_key)
         

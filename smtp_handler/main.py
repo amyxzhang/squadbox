@@ -20,7 +20,8 @@ Murmur Mail Interface Handler
 @author: Anant Bhardwaj
 @date: Oct 20, 2012
 '''
-
+import django
+django.setup()
 GROUP_OR_SQUAD = {'murmur' : 'group', 'squadbox' : 'squad'}
 
 @route("(address)@(host)", address="all", host=HOST_REGEX)
@@ -149,7 +150,7 @@ def admins(message, group_name=None, host=None):
                 email = a.member.email
                 relay.deliver(mail, To = email)
 
-        except Exception, e:
+        except Exception as e:
             logging.debug(e)
             send_error_email(group_name, e, sender_addr, ADMIN_EMAILS)  
             return
@@ -443,7 +444,7 @@ def handle_post_murmur(message, group, host, verified):
                     handle_post(message, address=group_name)
 
 
-        except Exception, e:
+        except Exception as e:
             logging.debug(e)
             send_error_email(group.name, e, None, ADMIN_EMAILS)
             
@@ -452,7 +453,7 @@ def handle_post_murmur(message, group, host, verified):
             mail.Body = msg_text['plain']
             relay.deliver(mail, To = to_send)
                 
-    except Exception, e:
+    except Exception as e:
         logging.debug(e)
         send_error_email(group.name, e, None, ADMIN_EMAILS)
         return
@@ -595,7 +596,7 @@ def handle_post_squadbox(message, group, host, verified):
                 if updated_count > 0:
                     logging.debug("untrashed count: %s" % updated_count)
                     return 
-            except Exception, e:
+            except Exception as e:
                 logging.error("error untrashing msg: %s" % e)
                 pass
 

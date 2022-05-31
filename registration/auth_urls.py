@@ -24,7 +24,6 @@ consult a specific backend's documentation for details.
 """
 
 from django.conf.urls import include
-from django.conf.urls import patterns
 from django.conf.urls import url
 
 from django.contrib.auth import views as auth_views
@@ -32,39 +31,39 @@ from browser.views import murmur_acct
 
 from http_handler.settings import WEBSITE
 
-urlpatterns = patterns('',
+urlpatterns = [
                        url(r'^login/$',
-                           auth_views.login,
+                           auth_views.LoginView.as_view(template_name='registration/login.html' ),
                            {'template_name': 'registration/login.html',
                            'extra_context' : {'website' : WEBSITE},
                            },
                            name='auth_login'),
                        url(r'^logout/$',
-                           auth_views.logout,
+                           auth_views.LogoutView.as_view(template_name='registration/logout.html'),
                            {'template_name': 'registration/logout.html',
                            'extra_context' : {'website' : WEBSITE},
                            },
                            name='auth_logout'),
                        url(r'^password/change/$',
                            murmur_acct,
-                           {'acct_func': auth_views.password_change}, 
+                           {'acct_func': auth_views.PasswordChangeView.as_view(template_name='auth_password_change')}, 
                            name='auth_password_change',
                            ),
                        url(r'^password/change/done/$',
                            murmur_acct,
-                           {'acct_func': auth_views.password_change_done},
+                           {'acct_func': auth_views.PasswordChangeDoneView.as_view(template_name='auth_password_change_done')},
                            name='auth_password_change_done',
                            ),
                        url(r'^password/reset/$',
-                           auth_views.password_reset,
+                           auth_views.PasswordResetView.as_view(template_name='auth_password_reset'),
                            name='auth_password_reset'),
                        url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
-                           auth_views.password_reset_confirm,
+                           auth_views.PasswordResetConfirmView.as_view(template_name='auth_password_reset_confirm'),
                            name='auth_password_reset_confirm'),
                        url(r'^password/reset/complete/$',
-                           auth_views.password_reset_complete,
+                           auth_views.PasswordResetCompleteView.as_view(template_name='auth_password_reset_complete'),
                            name='auth_password_reset_complete'),
                        url(r'^password/reset/done/$',
-                           auth_views.password_reset_done,
+                           auth_views.PasswordResetDoneView.as_view(template_name='auth_password_reset_done'),
                            name='auth_password_reset_done'),
-)
+]

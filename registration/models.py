@@ -11,12 +11,12 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from http_handler.settings import WEBSITE
-
-try:
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-except ImportError:
-    from schema.models import UserProfile as User
+from schema.models import UserProfile as User
+# try:
+#     from django.contrib.auth import get_user_model
+#     User = settings.AUTH_USER_MODEL
+# except ImportError:
+#     from schema.models import UserProfile as User
 
 try:
     from django.utils.timezone import now as datetime_now
@@ -83,6 +83,7 @@ class RegistrationManager(models.Manager):
         user. To disable this, pass ``send_email=False``.
         
         """
+        
         new_user = User.objects.create_user(email, password)
         new_user.is_active = False
         new_user.save()
@@ -93,7 +94,7 @@ class RegistrationManager(models.Manager):
             registration_profile.send_activation_email(site)
 
         return new_user
-    create_inactive_user = transaction.commit_on_success(create_inactive_user)
+    create_inactive_user = transaction.atomic(create_inactive_user)
 
     def create_profile(self, user):
         """
@@ -105,11 +106,11 @@ class RegistrationManager(models.Manager):
         username and a random salt.
         
         """
-        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+        salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:5]
         email = user.email
-        if isinstance(email, unicode):
+        if isinstance(email, str):
             email = email.encode('utf-8')
-        activation_key = hashlib.sha1(salt+email).hexdigest()
+        activation_key = hashlib.sha1((salt+email.decode()).encode('utf-8')).hexdigest()
         return self.create(user=user,
                            activation_key=activation_key)
         
@@ -181,7 +182,7 @@ class RegistrationProfile(models.Model):
     """
     ACTIVATED = u"ALREADY_ACTIVATED"
     
-    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
+    user = models.ForeignKey(User, unique=True, verbose_name=_('user'), on_delete=models.CASCADE)
     activation_key = models.CharField(_('activation key'), max_length=40)
     
     objects = RegistrationManager()

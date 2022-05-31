@@ -1,5 +1,5 @@
 import mimetypes
-from lamson import encoding, bounce
+from salmon import encoding, bounce
 from email.utils import parseaddr
 import os
 import warnings
@@ -13,7 +13,7 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.utils import parseaddr
 import sys
-from lamson.encoding import normalize_header, header_to_mime_encoding
+from salmon.encoding import normalize_header, header_to_mime_encoding
 import quopri
 
 ADDRESS_HEADERS_WHITELIST = ['From', 'To', 'Delivered-To', 'Cc', 'Bcc']
@@ -302,7 +302,7 @@ def to_message(mail):
 
     try:
         out = MurmurMIMEPart(ctype, **params)
-    except TypeError, exc:
+    except TypeError as exc:
         raise EncodingError("Content-Type malformed, not allowed: %r; %r (Python ERROR: %s" %
                             (ctype, params, exc.message))
 

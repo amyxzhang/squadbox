@@ -1,19 +1,19 @@
 import base64, json, logging
 
-from annoying.decorators import render_to
+from browser.api import render_to
 from boto.s3.connection import S3Connection
 from html2text import html2text
-from lamson.mail import MailResponse
+# from lamson.mail import MailResponse
 
 from django.conf import global_settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models.aggregates import Count
 from django.http import *
-from django.shortcuts import get_object_or_404, redirect, render_to_response, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.context import RequestContext
 from django.utils.encoding import *
 
@@ -52,7 +52,7 @@ def about(request):
 
 @render_to('resources.html')
 def resources(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		groups_links = get_groups_links_from_roles(user, groups)
@@ -73,8 +73,8 @@ def email_filters(request):
 	active_group = None
 	group_name = request.GET.get('group')
 	group_address = '%s@%s' % (group_name, BASE_URL)
-	print "group address:", group_address
-	if request.user.is_authenticated():
+	print ("group address:", group_address)
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		if get_role_from_group_name(user, group_name) == "admin":
 			res = engine.main.get_or_generate_filter_hash(user, group_name, push=False)
@@ -84,7 +84,7 @@ def email_filters(request):
 
 @render_to('404.html')
 def error(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		groups_links = get_groups_links_from_roles(user, groups)
@@ -114,11 +114,10 @@ def error(request):
 
 def index(request):
 	homepage = "%s/home.html" % WEBSITE
-	if not request.user.is_authenticated():
-		return render_to_response(homepage,
+	if not request.user.is_authenticated:
+		return render(request, homepage,
 					  			{'form': AuthenticationForm(),
-					  			'reg_form': RegistrationForm()},
-					   			context_instance=RequestContext(request))
+					  			'reg_form': RegistrationForm()})
 	else:
 		if WEBSITE == 'murmur':
 			return HttpResponseRedirect('/posts')
@@ -128,7 +127,7 @@ def index(request):
 	
 @render_to(WEBSITE+'/posts.html')
 def posts(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -201,7 +200,7 @@ def posts(request):
 
 @render_to(WEBSITE+'/mobile_list_posts.html')
 def post_list(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -224,8 +223,8 @@ def post_list(request):
 				threads = paginator(request.GET.get('page'), threads)
 				
 				engine.main.list_posts_page(threads, group, res, user=user, format_datetime=False, return_replies=False, text_limit=250)
-			except Exception, e:
-				print e
+			except Exception as e:
+				print(e)
 				res['code'] = msg_code['UNKNOWN_ERROR']
 			logging.debug(res)
 					
@@ -260,7 +259,7 @@ def thread(request):
 	
 	group = thread.group
 	
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		groups_links = get_groups_links_from_roles(user, groups)
@@ -319,7 +318,7 @@ def rejected_thread(request):
 	
 	group = thread.group
 	
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		mg = MemberGroup.objects.filter(member=user, group=group)
 		if mg.exists() and (mg[0].admin or mg[0].moderator):
@@ -355,7 +354,7 @@ def settings(request):
 @render_to(WEBSITE+"/groups.html")
 @login_required
 def my_groups(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		if request.flavour == "mobile":
 			return HttpResponseRedirect('/my_group_list')
@@ -511,7 +510,7 @@ def my_group_settings_view(request, group_name):
 @render_to(WEBSITE+"/create_post.html")
 @login_required
 def my_group_create_post_view(request, group_name):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		try:
@@ -531,7 +530,7 @@ def list_my_groups(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.list_my_groups(user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -586,8 +585,8 @@ def edit_group_info(request):
 				request.session['active_group'] = new_group_name
 
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -597,8 +596,8 @@ def edit_members(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.edit_members_table(request.POST['group_name'], request.POST['toDelete'], request.POST['toAdmin'], request.POST['toMod'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -608,7 +607,7 @@ def delete_group(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.delete_group(request.POST['group_name'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -625,8 +624,8 @@ def create_group(request):
 		auto_approve = request.POST['auto_approve'] =='true'
 		res = engine.main.create_group(request.POST['group_name'], request.POST['group_desc'], public, attach, send_rejected, store_rejected, mod_edit_wl_bl, mod_rules, auto_approve, user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -636,8 +635,8 @@ def get_group_settings(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.get_group_settings(request.POST['group_name'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -652,8 +651,8 @@ def edit_group_settings(request):
 		no_emails = request.POST['no_emails'] == 'true'
 		res = engine.main.edit_group_settings(request.POST['group_name'], following, upvote_emails, receive_attachments, no_emails, user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -665,7 +664,7 @@ def activate_group(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.activate_group(request.POST['group_name'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -677,7 +676,7 @@ def deactivate_group(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.deactivate_group(request.POST['group_name'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -689,7 +688,7 @@ def add_members(request):
 		add_as_mods = request.POST['add_as_mods'] == 'true'
 		res = engine.main.add_members(request.POST['group_name'], request.POST['emails'], add_as_mods, user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -706,8 +705,8 @@ def add_list(request):
 		res = engine.main.add_list(request.POST['group_name'], request.POST['email'], 
 			can_receive, can_post, request.POST['list_url'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -717,8 +716,8 @@ def delete_list(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.delete_list(request.POST['group_name'], request.POST['lists'], user)
 		return HttpResponse(json.dumps(res), content_type='application/json')
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -731,8 +730,8 @@ def adjust_list_can_post(request):
 			can_post = True
 		res = engine.main.adjust_list_can_post(request.POST['group_name'], request.POST['lists'], can_post, user)
 		return HttpResponse(json.dumps(res), content_type='application/json')
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -745,14 +744,14 @@ def adjust_list_can_receive(request):
 			can_receive = True
 		res = engine.main.adjust_list_can_receive(request.POST['group_name'], request.POST['lists'], can_receive, user)
 		return HttpResponse(json.dumps(res), content_type='application/json')
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 def subscribe_group(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 		
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.subscribe_group(request.POST['group_name'], user)
@@ -765,7 +764,7 @@ def subscribe_group(request):
 										content_type="application/json")
 	
 
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 	
@@ -776,7 +775,7 @@ def unsubscribe_group(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.unsubscribe_group(request.POST['group_name'], user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -788,7 +787,7 @@ def group_info(request):
 		res = engine.main.group_info(request.POST['group_name'], user)
 		res['admin_email'] = request.POST['group_name'] + '+admins@' + HOST
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -800,22 +799,22 @@ def list_posts(request):
 		res['user'] = request.user.email
 		res['group_name'] = group_name
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
-		print e
+		print(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def refresh_posts(request):
 	try:
 		group_name = request.POST.get('active_group')
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 		else:
 			user = None
 		res = engine.main.list_posts(group_name=group_name, user=user, timestamp_str = request.POST['timestamp'])
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except  Exception, e:
+	except  Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -825,7 +824,7 @@ def load_post(request):
 	try:
 		res = engine.main.load_post(group_name=None, thread_id = request.POST['thread_id'], msg_id=request.POST['msg_id'])
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -920,8 +919,8 @@ def insert_post(request):
 
 		del res['tag_objs']
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 		
@@ -1038,15 +1037,15 @@ def insert_reply(request):
 
 		del res['tag_objs']
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print sys.exc_info()
+	except Exception as e:
+		print(sys.exc_info())
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 	
 @render_to(WEBSITE+"/follow_tag.html")
 @login_required
 def follow_tag_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1063,7 +1062,7 @@ def follow_tag_get(request):
 @render_to(WEBSITE+"/follow_tag.html")
 @login_required
 def unfollow_tag_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1080,7 +1079,7 @@ def unfollow_tag_get(request):
 @render_to(WEBSITE+"/follow_tag.html")
 @login_required
 def mute_tag_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1097,7 +1096,7 @@ def mute_tag_get(request):
 @render_to(WEBSITE+"/follow_tag.html")
 @login_required
 def unmute_tag_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1116,7 +1115,7 @@ def unmute_tag_get(request):
 @render_to(WEBSITE+"/follow_thread.html")
 @login_required
 def follow_thread_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1131,7 +1130,7 @@ def follow_thread_get(request):
 @render_to(WEBSITE+"/follow_thread.html")
 @login_required
 def unfollow_thread_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1146,7 +1145,7 @@ def unfollow_thread_get(request):
 @render_to(WEBSITE+"/follow_thread.html")
 @login_required
 def mute_thread_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		
@@ -1161,7 +1160,7 @@ def mute_thread_get(request):
 @render_to(WEBSITE+"/follow_thread.html")
 @login_required
 def unmute_thread_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 
@@ -1180,8 +1179,8 @@ def upvote(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.upvote(request.POST['post_id'], user=user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print (e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 	
@@ -1191,8 +1190,8 @@ def unupvote(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.unupvote(request.POST['post_id'], user=user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print (e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1202,7 +1201,7 @@ def unupvote(request):
 def unsubscribe_get(request):
 	group_name = request.GET.get('group_name')
 
-	if not request.user.is_authenticated():
+	if not request.user.is_authenticated:
 		return redirect(global_settings.LOGIN_URL + '?next=/unsubscribe_get?group_name=' + group_name)
 
 	if WEBSITE == 'murmur':
@@ -1239,7 +1238,7 @@ def subscribe_get(request):
 	group_name = request.GET.get('group_name')
 	email_param = request.GET.get('email')
 
-	if not request.user.is_authenticated() and not email:
+	if not request.user.is_authenticated and not email:
 		return redirect(global_settings.LOGIN_URL + '?next=/subscribe_get?group_name=' + group_name)
 
 	if WEBSITE == 'murmur':
@@ -1259,7 +1258,7 @@ def subscribe_get(request):
 	if not g.public:
 		return redirect('/404?e=perm')
 
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.subscribe_group(group_name, user)
@@ -1294,7 +1293,7 @@ def subscribe_get(request):
 @render_to(WEBSITE+"/upvote.html")
 @login_required
 def upvote_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		post_id = request.GET.get('post_id')
@@ -1308,7 +1307,7 @@ def upvote_get(request):
 @render_to(WEBSITE+"/upvote.html")
 @login_required
 def unupvote_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 
@@ -1323,7 +1322,7 @@ def unupvote_get(request):
 @render_to("whitelist.html")
 @login_required
 def blacklist_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		group_name = request.GET.get('group_name')
@@ -1338,7 +1337,7 @@ def blacklist_get(request):
 @render_to("whitelist.html")
 @login_required
 def whitelist_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		groups = Group.objects.filter(membergroup__member=user).values("name")
 		group_name = request.GET.get('group_name')
@@ -1359,8 +1358,8 @@ def whitelist(request):
 		sender_emails = request.POST['senders']
 		res = engine.main.update_blacklist_whitelist(user, group_name, sender_emails, True, False)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print (e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 	
@@ -1373,8 +1372,8 @@ def blacklist(request):
 		sender_emails = request.POST['senders']
 		res = engine.main.update_blacklist_whitelist(user, group_name, sender_emails, False, True)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1387,15 +1386,15 @@ def unblacklist_unwhitelist(request):
 		sender_emails = request.POST['senders']
 		res = engine.main.update_blacklist_whitelist(user, group_name, sender_emails, False, False)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @render_to("approve_reject.html")
 @login_required
 def approve_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		group_name = request.GET.get('group_name')
 		post_id = request.GET.get('post_id')
@@ -1410,7 +1409,7 @@ def approve_get(request):
 @render_to("approve_reject.html")
 @login_required
 def reject_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		group_name = request.GET.get('group_name')
 		post_id = request.GET.get('post_id')
@@ -1425,21 +1424,21 @@ def reject_get(request):
 @login_required
 def approve_post(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			group_name = request.POST['group_name']
 			post_id = request.POST['post_id']
 			res = engine.main.update_post_status(user, group_name, post_id, 'A')
 			return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def reject_post(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			group_name = request.POST['group_name']
 			post_id = request.POST['post_id']
@@ -1447,8 +1446,8 @@ def reject_post(request):
 			tags = request.POST['tags']
 			res = engine.main.update_post_status(user, group_name, post_id, 'R', explanation=explanation, tags=tags)
 			return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1458,8 +1457,8 @@ def delete_post(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.delete_post(user, request.POST['id'], request.POST['thread_id'])
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1474,15 +1473,15 @@ def delete_posts(request):
 			if not res['status']:
 				break
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def follow_thread(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.follow_thread(request.POST['thread_id'], user=user)
 			return HttpResponse(json.dumps(res), content_type="application/json")
@@ -1491,8 +1490,8 @@ def follow_thread(request):
 			return HttpResponse(json.dumps({'redirect': True, 
 										'url': global_settings.LOGIN_URL + "?next=/thread?tid=" + thread}), 
 										content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1502,62 +1501,62 @@ def unfollow_thread(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.unfollow_thread(request.POST['thread_id'], user=user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
+	except Exception as e:
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def follow_tag(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.follow_tag(request.POST['tag_name'], request.POST['group_name'], user=user)
 			return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def unfollow_tag(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.unfollow_tag(request.POST['tag_name'], request.POST['group_name'], user=user)
 			return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def mute_tag(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.mute_tag(request.POST['tag_name'], request.POST['group_name'], user=user)
 			return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def unmute_tag(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.unmute_tag(request.POST['tag_name'], request.POST['group_name'], user=user)
 			return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
 @login_required
 def mute_thread(request):
 	try:
-		if request.user.is_authenticated():
+		if request.user.is_authenticated:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			res = engine.main.mute_thread(request.POST['thread_id'], user=user)
 			return HttpResponse(json.dumps(res), content_type="application/json")
@@ -1566,8 +1565,8 @@ def mute_thread(request):
 			return HttpResponse(json.dumps({'redirect': True, 
 										'url': global_settings.LOGIN_URL + "?next=/thread?tid=" + thread}), 
 										content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1577,8 +1576,8 @@ def unmute_thread(request):
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.unmute_thread(request.POST['thread_id'], user=user)
 		return HttpResponse(json.dumps(res), content_type="application/json")
-	except Exception, e:
-		print e
+	except Exception as e:
+		print(e)
 		logging.debug(e)
 		return HttpResponse(request_error, content_type="application/json")
 
@@ -1594,7 +1593,7 @@ def murmur_acct(request, acct_func=None, template_name=None):
 @login_required
 def serve_attachment(request, hash_filename):
 
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		try:
 			user = get_object_or_404(UserProfile, email=request.user.email)
 			attachment = Attachment.objects.get(hash_filename=hash_filename)
@@ -1616,7 +1615,7 @@ def serve_attachment(request, hash_filename):
 			logging.debug("No post with msg id %s" % attachment.msg_id)
 			return HttpResponseRedirect('/404')
 
-		except Exception, e:
+		except Exception as e:
 			logging.debug("Error serving attachment: %s" % e)
 			return HttpResponseRedirect('/404')
 	else:
@@ -1625,10 +1624,11 @@ def serve_attachment(request, hash_filename):
 
 @render_to('squadbox/mod_queue.html')
 def mod_queue(request, group_name):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 
 		mgs = MemberGroup.objects.filter(member=user, group__name=group_name)
+		print("what is up")
 		if not mgs.exists():
 			return redirect('404/e=member')
 
@@ -1667,7 +1667,7 @@ def subscribe_confirm(request, token):
 
 @render_to('squadbox/rejected.html')
 def rejected(request, group_name):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		res = engine.main.load_rejected_posts(user, group_name)
 		if not res['status']:
@@ -1683,7 +1683,7 @@ def rejected(request, group_name):
 @render_to("squadbox/moderate_user_thread.html")
 @login_required
 def moderate_user_for_thread_get(request):
-	if request.user.is_authenticated():
+	if request.user.is_authenticated:
 		user = get_object_or_404(UserProfile, email=request.user.email)
 		group_name = request.GET.get('group_name')
 		subject = request.GET.get('subject')

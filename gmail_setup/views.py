@@ -9,25 +9,25 @@ from django.utils.timezone import utc
 from pytz import utc
 
 
-import api
+import gmail_setup.api as api
 from browser.util import get_groups_links_from_roles
 import engine
 from gmail_setup.api import create_gmail_filter
 from http_handler.settings import BASE_URL, WEBSITE
 from schema.models import CredentialsModel, FlowModel, Group
 
-from annoying.decorators import render_to
+from browser.api import render_to
 from apiclient.discovery import build
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import get_current_site
-from django.core.urlresolvers import reverse
-from django.shortcuts import render, render_to_response
-from oauth2client import xsrfutil
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.shortcuts import render
+from oauth2client.contrib import xsrfutil
 from oauth2client.client import flow_from_clientsecrets
-from oauth2client.django_orm import Storage
+from oauth2client.contrib.django_orm import Storage
 
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
 
@@ -81,19 +81,19 @@ def auth(request):
     #REDIRECT_URI = 'https://localhost:8000/gmail_setup/callback'
     REDIRECT_URI = "https://%s%s" % (BASE_URL, reverse("oauth2:return")) 
     #REDIRECT_URI = 'https://' + BASE_URL + '/gmail_setup/callback'
-    print "ACCESSING CLIENT SECRETS"
+    print("ACCESSING CLIENT SECRETS")
     with open(CLIENT_SECRETS) as json_data:
         d = json.load(json_data)
-        print "DATA:", d
+        print("DATA:", d)
 
-    print "creating flow"
+    print("creating flow")
     FLOW = flow_from_clientsecrets(
         CLIENT_SECRETS,
         scope='https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.settings.basic https://www.googleapis.com/auth/gmail.modify',
         redirect_uri=REDIRECT_URI
     )
 
-    print "got flow"
+    print("got flow")
 
     FLOW.params['access_type'] = 'offline'
 
@@ -247,7 +247,7 @@ def import_start(request):
             filter_hash = engine.main.get_or_generate_filter_hash(user, group_name, push=False)['hash']
             try:
                 api.create_gmail_filter(service_mail, emails_to_add, forward_address, filter_hash)
-            except Exception, e:
+            except Exception as e:
                 logging.error("Exception creating gmail filter - probably hit request limit")
                 logging.debug(e)
 
